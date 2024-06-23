@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{fb64f234-741a-4512-9f92-ff8cddebc13c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render">
+      <UniqueIdentifier>{5beba128-f75c-489d-aea2-eb960f783d54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\GameLogic">
+      <UniqueIdentifier>{feefdb31-f989-40d5-998a-39db35f5e5e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Scene">
+      <UniqueIdentifier>{2df1c25e-9cbd-4ab1-8139-eaace61a3848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Common">
+      <UniqueIdentifier>{ed738891-7c4d-41fd-a6e4-125b74772f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Common\Vertex">
+      <UniqueIdentifier>{06b20cb5-9baf-4c94-9a7f-7cc6db0bf24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Helper">
+      <UniqueIdentifier>{fa078cd2-9a95-48f7-8771-c13a931c1614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Resource">
+      <UniqueIdentifier>{c9a52d81-d219-4c6f-9367-bb96a7365f95}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\include\Common\Vertex\Vertex.h">
+      <Filter>include\Common\Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Scene\SceneManager.h">
+      <Filter>include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\FrameGraph.h">
+      <Filter>include\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Renderer.h">
+      <Filter>include\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Headers.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\ZCF_engine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Render.hpp">
+      <Filter>include\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Scene\Scene.hpp">
+      <Filter>include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameLogic\GameLogic.hpp">
+      <Filter>include\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Common\Common.hpp">
+      <Filter>include\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\d3dx12.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Helper.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Buffer.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Device_Windows.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\RenderResourceManager.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Common\Camera.h">
+      <Filter>include\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\RenderPass.h">
+      <Filter>include\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\SrcRenderHelper.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\src\ZCF_engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Device_Windows.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Headers.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\RenderResourceManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Buffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\RenderPass.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shaders\shader1.hlsl">
+      <Filter>资源文件</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
