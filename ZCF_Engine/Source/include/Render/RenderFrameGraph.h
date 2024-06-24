@@ -17,35 +17,58 @@ namespace Engine::Render::frameGraph
 //				一个pass结束时,就可以开始准备下一个pass了,串行的顺序
 
 
-enum ResourceState
+enum RFGResourceType
 {
-	UAV,
-	SRV,
-	RTV,
-	DSV,
-
+	VertexBuffer,
+	IndexBuffer,
+	ConstantBuffer,
+	InstanceBuffer,
+	Texture_2D,
+	Texture_3D,
+	Texture_Array,
+	Sampler,
 };
 
-struct Resource
+enum RFGResourceFormat
 {
-	std::string		name;
-	ResourceState	type;
-	uint16_t		life;
+	R8_G8_B8_A8
+	
+};
 
-	uint32_t		id;
+enum RFGResourceUsage
+{
+	VBV,
+	IBV,
+	CBV,
+	UAV,
+	SOV,
+	SRV,
+	DSV,
+	RTV,
+	Sample,
+};
+//Barrier
+struct RFGResource
+{
+	std::string			name;
+	RFGResourceType		Type;
+	RFGResourceFormat	Format;
+	RFGResourceUsage	Usage;
 };
 //type:buffer,texture,Constant...
 
 
-struct Pass
-{
-	std::string name;
-};
 
 enum PassType
 {
 	Graphics,
 	Compute,
+};
+
+struct Pass
+{
+	std::string		name;
+	PassType		passType;
 };
 	
 
@@ -60,8 +83,6 @@ public:
 
 
 private:
-	std::vector<Pass> Passes;
-	std::vector<Resource> Resources;
 
 };
 }

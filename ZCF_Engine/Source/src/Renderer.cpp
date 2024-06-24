@@ -19,7 +19,7 @@ namespace Engine::Render::renderer
 	}
 	void Renderer::Render()
 	{
-		TranglePass();
+		LearnPass();
 	}
 	void Renderer::RenderBegin()
 	{

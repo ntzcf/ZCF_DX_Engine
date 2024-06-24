@@ -1,6 +1,4 @@
 #pragma once
-#include<iostream>
-#include <d3d12.h>
 #include <windows.h>
 #include <wrl.h>  //添加WTL支持 方便使用COM
 #include <wrl/client.h>
@@ -11,20 +9,32 @@
 #include <d3d12shader.h>
 #include <d3dcompiler.h>
 #include <SDKDDKVer.h>
-#define WIN32_LEAN_AND_MEAN // 从 Windows 头中排除极少使用的资料
-#include <tchar.h>
-#include <pix.h>
 #include <DirectXColors.h>
-#include <memory>
-#include <stdint.h>
-#include <unordered_map>
-
+#define WIN32_LEAN_AND_MEAN // 从 Windows 头中排除极少使用的资料
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
-
 #include "d3dx12.h"
+
+
+
+
+
+
+#include <tchar.h>
+#include <pix.h>
+#include <memory>
+#include <stdint.h>
+#include<iostream>
+#include <unordered_map>
+#include <functional>
+
+
+
+
+
+
 
 //#if defined(_DEBUG)
 //{

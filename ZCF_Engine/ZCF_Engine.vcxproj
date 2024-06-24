@@ -26,7 +26,7 @@
     <ClInclude Include="Source\include\Headers.hpp" />
     <ClInclude Include="Source\include\Render\Buffer.h" />
     <ClInclude Include="Source\include\Render\d3dx12.h" />
-    <ClInclude Include="Source\include\Render\FrameGraph.h" />
+    <ClInclude Include="Source\include\Render\RenderFrameGraph.h" />
     <ClInclude Include="Source\include\Render\Helper.h" />
     <ClInclude Include="Source\include\Render\Render.hpp" />
     <ClInclude Include="Source\include\Render\Renderer.h" />

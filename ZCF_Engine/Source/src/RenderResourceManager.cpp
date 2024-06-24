@@ -31,12 +31,12 @@ namespace Engine::Render::resource
 		m_viewPort = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
 		m_scissorRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
 
-		CreateRootSignature();
+		/*CreateRootSignature();
 		CreatePSO();
 		CreateCmdList();
 		CreateFenceAndEvent();
 		CreateBarrier();
-		CreateVertexBuffer();
+		CreateVertexBuffer();*/
 	}
 
 
@@ -63,6 +63,8 @@ namespace Engine::Render::resource
 	}
 	void RenderResourceManager::CreatePSO()
 	{
+		CreateRootSignature();
+
 #if defined(_DEBUG)
 		//调试状态下，打开Shader编译的调试标志，不优化
 		UINT nCompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -249,54 +251,54 @@ namespace Engine::Render::resource
 	}
 	void RenderResourceManager::run()
 	{
-		m_commandList->Close();
-		//命令分配器先Reset一下
-		ThrowIfFailed(m_commandAllocator->Reset());
-		m_commandList->Close();
-		//Reset命令列表，并重新指定命令分配器和PSO对象
-		ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), m_pipelineState.Get()));
+		//m_commandList->Close();
+		////命令分配器先Reset一下
+		//ThrowIfFailed(m_commandAllocator->Reset());
+		//m_commandList->Close();
+		////Reset命令列表，并重新指定命令分配器和PSO对象
+		//ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), m_pipelineState.Get()));
 
-		//开始记录命令
-		m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-		m_commandList->SetPipelineState(m_pipelineState.Get());
-		m_commandList->RSSetViewports(1, &m_viewPort);
-		m_commandList->RSSetScissorRects(1, &m_scissorRect);
+		////开始记录命令
+		//m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+		//m_commandList->SetPipelineState(m_pipelineState.Get());
+		//m_commandList->RSSetViewports(1, &m_viewPort);
+		//m_commandList->RSSetScissorRects(1, &m_scissorRect);
 
-		// 通过资源屏障判定后缓冲已经切换完毕可以开始渲染了
-		m_beginResBarrier.Transition.pResource = m_renderTarget.Get();
-		m_commandList->ResourceBarrier(1, &m_beginResBarrier);
+		//// 通过资源屏障判定后缓冲已经切换完毕可以开始渲染了
+		//m_beginResBarrier.Transition.pResource = m_renderTarget.Get();
+		//m_commandList->ResourceBarrier(1, &m_beginResBarrier);
 
-		//设置渲染目标
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvhandle= DW.GetRenderTargetView();
-		m_commandList->OMSetRenderTargets(1, &rtvhandle, FALSE, nullptr);
+		////设置渲染目标
+		//D3D12_CPU_DESCRIPTOR_HANDLE rtvhandle= DW.GetRenderTargetView();
+		//m_commandList->OMSetRenderTargets(1, &rtvhandle, FALSE, nullptr);
 
-		// 继续记录命令，并真正开始新一帧的渲染
-		const float							faClearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-		m_commandList->ClearRenderTargetView(DW.GetRenderTargetView(), faClearColor, 0, nullptr);
-		m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+		//// 继续记录命令，并真正开始新一帧的渲染
+		//const float							faClearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+		//m_commandList->ClearRenderTargetView(DW.GetRenderTargetView(), faClearColor, 0, nullptr);
+		//m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		//m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 
-		//Draw Call！！！
-		m_commandList->DrawInstanced(3, 1, 0, 0);
+		////Draw Call！！！
+		//m_commandList->DrawInstanced(3, 1, 0, 0);
 
-		//又一个资源屏障，用于确定渲染已经结束可以提交画面去显示了
-		m_endResBarrier.Transition.pResource = m_renderTarget.Get();
-		m_commandList->ResourceBarrier(1, &m_endResBarrier);
-		//关闭命令列表，可以去执行了
-		ThrowIfFailed(m_commandList->Close());
+		////又一个资源屏障，用于确定渲染已经结束可以提交画面去显示了
+		//m_endResBarrier.Transition.pResource = m_renderTarget.Get();
+		//m_commandList->ResourceBarrier(1, &m_endResBarrier);
+		////关闭命令列表，可以去执行了
+		//ThrowIfFailed(m_commandList->Close());
 
-		//执行命令列表
-		ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
-		m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+		////执行命令列表
+		//ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
+		//m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-		//提交画面
-		ThrowIfFailed(DW.GetSwapChain()->Present(1, 0));
+		////提交画面
+		//ThrowIfFailed(DW.GetSwapChain()->Present(1, 0));
 
-		//开始同步GPU与CPU的执行，先记录围栏标记值
-		const UINT64 n64CurrentFenceValue = m_fenceValues[m_frameIndex];
-		ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), n64CurrentFenceValue));
-		m_fenceValues[m_frameIndex]++;
-		ThrowIfFailed(m_fence->SetEventOnCompletion(n64CurrentFenceValue, m_fenceEvent));
+		////开始同步GPU与CPU的执行，先记录围栏标记值
+		//const UINT64 n64CurrentFenceValue = m_fenceValues[m_frameIndex];
+		//ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), n64CurrentFenceValue));
+		//m_fenceValues[m_frameIndex]++;
+		//ThrowIfFailed(m_fence->SetEventOnCompletion(n64CurrentFenceValue, m_fenceEvent));
 	}
 
 	/// <summary>
@@ -305,12 +307,11 @@ namespace Engine::Render::resource
 	/// <param name="LPI"></param>
 	void RenderResourceManager::CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI)
 	{
-		//	CreateAPI_Resource(LPI.?);
-		//	记录,cache在<name , API_Resource_Address>
-		// 
-		//	LPI.Excute(CmdList,API_Resource)
-		//	回调lamda
-		//	PSO, Root_View_Pointer, 
 		//
+		CreatePSO();
+		CreateVertexBuffer();//	<name,Resource>
+		//CreateViews();//	<name,Resource>	<Resource,View>
+
+		
 	}
 };

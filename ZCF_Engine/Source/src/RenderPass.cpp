@@ -2,8 +2,12 @@
 #include "Render/SrcRenderHelper.h"
 
 
-namespace Engine::Render::renderer::Pass
+namespace Engine::Render::renderpass
 {
 
+	void LearnPassInfo::PassCollect()
+	{
+
+	}
 
 }

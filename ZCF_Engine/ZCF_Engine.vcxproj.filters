@@ -41,7 +41,7 @@
     <ClInclude Include="Source\include\Scene\SceneManager.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\FrameGraph.h">
+    <ClInclude Include="Source\include\Render\RenderFrameGraph.h">
       <Filter>include\Render</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\Renderer.h">

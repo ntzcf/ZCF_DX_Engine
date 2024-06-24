@@ -2,6 +2,7 @@
 
 #include "Helper.h"
 #include "Buffer.h"
+#include "RenderFrameGraph.h"
 
 namespace Engine::Render::renderpass
 {
@@ -25,8 +26,19 @@ namespace Engine::Render::renderpass
 		virtual void PassExcuteEnd();
 
 	private:
-		std::string				name;
+		//	Pass本身
+		std::string																						name;
+		//	Pass Type
+		//	Pass内
+		//	PSO
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>	commandList)>			Lamda;
+		//	Pass之间	&	Resource封装
+		std::vector<frameGraph::RFGResource>															InputResources;
+		std::vector<frameGraph::RFGResource>															OutputResources;
 
+
+
+		//PSO
 		struct RootSignature
 		{
 			uint16_t	Nums;
@@ -51,7 +63,6 @@ namespace Engine::Render::renderpass
 
 
 		bool				isStreamOutPut;
-
 
 		//								PiplineState
 		//	形参:PSO
@@ -79,6 +90,12 @@ namespace Engine::Render::renderpass
 
 
 		//无论形参,实参都是有动态收集部分,和假设,自动部分
+		struct PSO
+		{
+			RootSignature SG;
+
+		};
+
 	};
 
 
@@ -90,6 +107,9 @@ namespace Engine::Render::renderpass
 		LearnPassInfo();
 		~LearnPassInfo();
 
+		void PassCollectBegin();
+		void PassCollect();
+		void PassCollectEnd();
 
 	private:
 
