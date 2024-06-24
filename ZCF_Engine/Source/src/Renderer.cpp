@@ -38,7 +38,28 @@ namespace Engine::Render::renderer
 	{
 		renderpass::LearnPassInfo LPI;
 		LPI.PassCollectBegin();
-		LPI.PassCollect();//	这里负责把假设的固定部分设置完
+		LPI.PassCollect();//	这里负责把假设的固定部分设置完?
+		LPI.Lamda = [&](const ComPtr<ID3D12GraphicsCommandList> CL,const resource::RenderResourceManager RRM )->void
+			{
+				CL.BeginPass();
+				CL.SetPSO				(RRM.GetPSO("Pname"));
+				//vs-ps
+				CL.SetVB(RRM.GetVBV("Pname","InR_name"));
+				CL.SetIB(RRM.GetIBV("Pname","InR_name"));
+				CL.SetViewPort();
+				CL.SetScissor();
+				CL.SetRenderTargets(Slot,RRM.GetDescriptor("Pname","OutR_name").num, RRM.GetDescroptor("pname","OutR_name").Data);
+				CL.ClearRT(...);
+				CL.SetDepthStencil(...);
+				//Cl.SetDescriptorHeaps();	主动指定,还是自己只指定Descriptor,然后由后端去自行绑定√
+				auto SRV = RRM.GetSRV("InR_name", "Pname");
+				auto CBV = RRM.GetCBV("InR_name", "Pname");
+				auto R1 = RRM.~RenderResourceManager("Rname");
+				SRV.GPU_Virtual_Address = R1.GPU_Address;
+				//auto UAV相似
+				CL.DrawType();
+				CL.EndPass();
+			};
 		
 		LPI.PassCollectEnd();
 

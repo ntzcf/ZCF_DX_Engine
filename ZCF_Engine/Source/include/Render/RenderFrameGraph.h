@@ -55,7 +55,6 @@ struct RFGResource
 	RFGResourceFormat	Format;
 	RFGResourceUsage	Usage;
 };
-//type:buffer,texture,Constant...
 
 
 
@@ -65,7 +64,7 @@ enum PassType
 	Compute,
 };
 
-struct Pass
+struct PassInfo
 {
 	std::string		name;
 	PassType		passType;

@@ -24,7 +24,10 @@ namespace Engine::Render::resource
 		void run();
 		~RenderResourceManager() {};
 
-		//void CreatePassResource(Engine::Render::renderpass::RenderPassInfo);
+		//	注册<name ,Resource> <pass , Descriptors > 
+		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
+		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
+		void CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI);
 		void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
 
 
@@ -71,7 +74,18 @@ namespace Engine::Render::resource
 
 
 		//API_Resource_Manager
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12RootSignature>	>			RootSignatures;
+		//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12RootSignature>	>			RootSignatures;
+		//PSO
+		//Shader
+		//Raster
+		//
+		// 
+		//
+		//std::unordered_map<std::string , Comptr<MyResource>>		MyResources
+		//															DescriptorManager
+		//															UploadBuffers
+		//															Queues:G,C,Copy
+		//																
 
 	};
 }

@@ -251,7 +251,7 @@ namespace Engine::Render::resource
 	}
 	void RenderResourceManager::run()
 	{
-		//m_commandList->Close();
+		/*m_commandList->Close();*/
 		////命令分配器先Reset一下
 		//ThrowIfFailed(m_commandAllocator->Reset());
 		//m_commandList->Close();
@@ -301,6 +301,12 @@ namespace Engine::Render::resource
 		//ThrowIfFailed(m_fence->SetEventOnCompletion(n64CurrentFenceValue, m_fenceEvent));
 	}
 
+	void RenderResourceManager::CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI)
+	{
+		CreatePSO();
+		CreateBuffer();
+	}
+
 	/// <summary>
 	/// ////////////////////////////////CreatePassResource//////////////////////////////////////////
 	/// </summary>
@@ -309,9 +315,7 @@ namespace Engine::Render::resource
 	{
 		//
 		CreatePSO();
-		CreateVertexBuffer();//	<name,Resource>
-		//CreateViews();//	<name,Resource>	<Resource,View>
-
-		
+		CreateVertexBuffer();
+		CreateIndexBuffer();
 	}
 };

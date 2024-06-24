@@ -25,13 +25,15 @@ namespace Engine::Render::renderpass
 		virtual void PassExcute();
 		virtual void PassExcuteEnd();
 
-	private:
+	public:
 		//	Pass本身
 		std::string																						name;
-		//	Pass Type
+		frameGraph::PassInfo																			PassInfo;
 		//	Pass内
-		//	PSO
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>	commandList)>			Lamda;
+		//	PSO								PSO;
+		//只能由RFG调用了啊:	Renderer ->	RFG -> RRM ->RFG.Excute
+		std::function<void (Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
+			resource::RenderResourceManager)>			Lamda;
 		//	Pass之间	&	Resource封装
 		std::vector<frameGraph::RFGResource>															InputResources;
 		std::vector<frameGraph::RFGResource>															OutputResources;
