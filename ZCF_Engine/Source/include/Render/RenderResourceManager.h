@@ -14,9 +14,19 @@ namespace Engine::Render::resource
 		RenderResourceManager() {};
 		void Init(HWND window, int width, int height);
 		void CreateCmdList();
-		void CreateRootSignature();
+		//Root , Shader , Raster , InputView , RTVs&Format,DSV&Format , BlendState , SampleDesc
 		void CreatePSO();
+		void CreateRootSignature();
+
+		//V,I,C,Instance,T,U
+		//是统一封装成Buffer函数组, 还是写分支但是复用一个函数?
+		void CreateBuffer();
 		void CreateVertexBuffer();
+
+		//SRV CBV UAV DSV SOV RTV Sampler      VBV IBV   
+		void CreateViews();
+
+		//同步资源
 		void CreateFenceAndEvent();
 		void CreateBarrier();
 

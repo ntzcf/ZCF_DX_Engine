@@ -54,7 +54,7 @@ namespace Engine::Render::renderer
 				//Cl.SetDescriptorHeaps();	主动指定,还是自己只指定Descriptor,然后由后端去自行绑定√
 				auto SRV = RRM.GetSRV("InR_name", "Pname");
 				auto CBV = RRM.GetCBV("InR_name", "Pname");
-				auto R1 = RRM.~RenderResourceManager("Rname");
+				auto R1 = RRM.GetResource("Rname");
 				SRV.GPU_Virtual_Address = R1.GPU_Address;
 				//auto UAV相似
 				CL.DrawType();

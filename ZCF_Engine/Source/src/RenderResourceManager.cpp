@@ -305,6 +305,8 @@ namespace Engine::Render::resource
 	{
 		CreatePSO();
 		CreateBuffer();
+		CreateViews();
+		
 	}
 
 	/// <summary>

@@ -5,16 +5,14 @@
 namespace Engine::Render::frameGraph
 {
 
-//前端:各种登记
-//优化:优化图图
-//后端:绑定管理
-//核心:			[name,life] [attribute apiResource]
-// 				生命周期与名字绑定,属性决定真正的资源
-// pass:		[name,input,output,   num,names,type,state,attribute]
-// Resource:	[name,type,state,attribute]+实际绑定的真正资源索引
-// 执行:		passBegin,passExcute,passEnd
-//			    开始前给有名资源准备真正的资源绑定,然后执行回调时根据名字去索引
-//				一个pass结束时,就可以开始准备下一个pass了,串行的顺序
+//前端:各种登记,预创建
+//优化:优化图图,决定顺序
+//后端:资源创建,并行执行
+//				
+//						六维条件
+// 	   [Pass , Passes]	(PassInfo , ResourceInfo , QueueInfo)
+// 
+
 
 
 enum RFGResourceType
