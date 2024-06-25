@@ -2,7 +2,8 @@
 #include "Render/SrcRenderHelper.h"
 #include "Render/RenderPass.h"
 #include "Render/RenderResourceManager.h"
-
+#include "Render/Buffer.h"
+using namespace resource::Buffer;
 
 namespace Engine::Render::renderer
 {
@@ -43,31 +44,76 @@ namespace Engine::Render::renderer
 		LPI.Lamda=[&](Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> CL, resource::RenderResourceManager RRM,
 			Microsoft::WRL::ComPtr<ID3D12Device> Device)->void
 		{
+			auto FGR = RRM.GetFrameGraphicsResource("LearnPass");
 
+///////////////////////////////////////////////////////////////    PSO
+			CL->SetPipelineState(FGR->PSO.Get());
 			
-			CL->SetPipelineState(RRM.GetPSO(LPI.name));
+////////////////////////////////////////////////////////////////	Vertex_Index_buffers
+			std::vector<D3D12_VERTEX_BUFFER_VIEW>  VBVs;
+			std::vector<D3D12_INDEX_BUFFER_VIEW>   IBVs;
 
-			CL->IASetVertexBuffers(0,1,RRM.GetVBV(LPI.name));
+			for (auto VIB : FGR->V_I_Buffers)
+			{
+				if (VIB->GetAttribute() == VertexAttribute::Index)
+				{
+					D3D12_INDEX_BUFFER_VIEW IBV;
+					IBV.BufferLocation	=	VIB->Resource.Get()->GetGPUVirtualAddress();
+					IBV.SizeInBytes		=	VIB->Size / 8;
+					IBV.Format			=	VIB->Nums > 65536?  DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
+					IBVs.push_back(std::move(IBV));
+				}
+				else
+				{
+					D3D12_VERTEX_BUFFER_VIEW VBV;
+					VBV.BufferLocation = VIB->Resource.Get()->GetGPUVirtualAddress();
+					VBV.SizeInBytes = VIB->Size / 8;
+					VBV.StrideInBytes = VIB->OneBits/8;
+					VBVs.push_back(std::move(VBV));
+				}
+			}
+			//           这个输入槽Slot  得与PSO中InputLayput设置一样才行啊 , 这种循环法还得改进.
+			//           可以改下循环, 比如固定Position走开始slotS ,  Normal走slotS+1 ,   UV0走号slotS+2
+			//           记下一个开始slot,  假定输入slot都是连续的
+			//			 把绑定给移到循环里.
+			CL->IASetVertexBuffers(0,VBVs.size(),VBVs.data());
+			CL->IASetIndexBuffer(IBVs.data());
+			//			IndexBuffer好像固定只有一个,没必要vector的
+/////////////////////////////////////////////////////////	Topology
 
-			CL->OMSetRenderTargets(3,RRM.GetRTVs);
+
+////////////////////////////////////////////////////////	ViewPort
 
 
+///////////////////////////////////////////////////////		Scissor
 
+//////////////////////////////////////////////////////		RTV
+			//				num
+			auto RTVnums = FGR->RenderTargets.size();
+			std::vector<CD3DX12_CPU_DESCRIPTOR_HANDLE>	RTVs(RTVnums);
+			//				handle
+			auto handle = ( FGR->RTV_Heap->GetCPUDescriptorHandleForHeapStart());
+			//				handle_Start
+			auto RTV_size = FGR->RTV_DescriptorSize;
+			INT64 RTV_start_Offset = FGR->RTV_StartIndex * RTV_size;
+			handle.ptr = SIZE_T(INT64(handle.ptr) + RTV_start_Offset);
+			//				RTV_names
+			std::vector<std::string > RTV_names(RTVnums);
+			RTV_names.push_back( "RenderTarget" );
+			//				Handles
+			std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> Handles(RTVnums);
+			//				loop
+			for (int i = 0; i < RTVnums; i++)
+			{
+				Device->CreateRenderTargetView(FGR->RenderTargets[RTV_names[i]]->Resources.Get(), nullptr, handle);
+				Handles.push_back(handle);
+				handle.ptr = SIZE_T(INT64(handle.ptr) +RTV_size );
+			}
+			//				Set
+			CL->OMSetRenderTargets(RTVnums, Handles.data(), 1, FGR->DSV);
+			
 
 				//CL.BeginPass();
-				//auto FR = RRM.GetFrameResource("Pname");
-				////vs-ps
-				//CL.SetVB(FR.GetVBV);
-				//CL.SetIB(RRM.GetIBV);
-				//CL.SetViewPort(FR.ViewPort);
-				//CL.SetScissor(FR.Scissor);
-				//auto RTVs = FR.RTVs
-				//		RTV_Handles[RTVs.num()];
-				//		int i=0;
-				//for (auto RTV : FR.RTVs)
-				// {
-				//		RTV_Handles[i++]=RTV.handle
-				// }
 				//CL.SetRenderTargets(RTVs.num(),RTV_Handles.data(),RTVs.Single,FR.DSV);
 				//CL.ClearRT(...);
 				// 
