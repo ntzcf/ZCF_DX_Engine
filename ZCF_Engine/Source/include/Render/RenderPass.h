@@ -4,8 +4,10 @@
 #include "Buffer.h"
 #include "RenderFrameGraph.h"
 
+
 namespace Engine::Render::renderpass
 {
+	class resource::RenderResourceManager;
 	//	主要起个收集,记录的作用,叫struct感觉也不错
 	//	单Pass,暂没考虑Passes	&	Frames
 	//	每个pass都是特化的,有一定假设存在
@@ -32,8 +34,8 @@ namespace Engine::Render::renderpass
 		//	Pass内
 		//	PSO								PSO;
 		//只能由RFG调用了啊:	Renderer ->	RFG -> RRM ->RFG.Excute
-		std::function<void (Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
-			resource::RenderResourceManager)>			Lamda;
+		std::function<void (Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, resource::RenderResourceManager , 
+			Microsoft::WRL::ComPtr<ID3D12Device> )>		Lamda;
 		//	Pass之间	&	Resource封装
 		std::vector<frameGraph::RFGResource>															InputResources;
 		std::vector<frameGraph::RFGResource>															OutputResources;

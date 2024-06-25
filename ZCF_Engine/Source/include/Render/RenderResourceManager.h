@@ -13,15 +13,29 @@ namespace Engine::Render::resource
 	public:
 		RenderResourceManager() {};
 		void Init(HWND window, int width, int height);
+		void Update();
+		void run();
+		~RenderResourceManager() {};
+
+		//	注册<name , Resource> <pass , Descriptors > 
+		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
+		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
+		void CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI);
+		void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
+
+		ID3D12PipelineState*				GetPSO(std::string Pname);
+		ID3D12Resource*						GetResource(std::string Rname);
+		ID3D12Resource*						GetRenderTargets(std::string Pname);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE*		GetRTVs(std::string Pname);//RTV Heap 中 对应Resource 的 Handle
+		D3D12_VERTEX_BUFFER_VIEW*			GetVBV(std::string Pname);
+		D3D12_VERTEX_BUFFER_VIEW*			GetIBV(std::string Pname);
+		void 								GetCBV(std::string Pname);
+		Microsoft::WRL::ComPtr<ID3D12Resource>				m_renderTarget;
+
+	private:
 		void CreateCmdList();
 		//Root , Shader , Raster , InputView , RTVs&Format,DSV&Format , BlendState , SampleDesc
-		void CreatePSO();
-		void CreateRootSignature();
 
-		//V,I,C,Instance,T,U
-		//是统一封装成Buffer函数组, 还是写分支但是复用一个函数?
-		void CreateBuffer();
-		void CreateVertexBuffer();
 
 		//SRV CBV UAV DSV SOV RTV Sampler      VBV IBV   
 		void CreateViews();
@@ -30,16 +44,13 @@ namespace Engine::Render::resource
 		void CreateFenceAndEvent();
 		void CreateBarrier();
 
-		void Update();
-		void run();
-		~RenderResourceManager() {};
+		//V,I,C,Instance,T,U
+		//是统一封装成Buffer函数组, 还是写分支但是复用一个函数?
+		void CreateBuffer();
+		void CreateVertexBuffer();
 
-		//	注册<name ,Resource> <pass , Descriptors > 
-		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
-		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
-		void CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI);
-		void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
-
+		void CreatePSO(renderpass::RenderPassInfo);
+		void CreateRootSignature();
 
 
 	private:
@@ -49,16 +60,10 @@ namespace Engine::Render::resource
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue>			m_commandQueue;
 		//Device Update
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>		m_commandAllocator;
-		Microsoft::WRL::ComPtr<ID3D12Resource>				m_renderTarget;
 		uint32_t											m_frameIndex;
 		
-		//Shader
-		//PSO
-		//Buffer
 		
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>	m_commandList;
-		Microsoft::WRL::ComPtr<ID3D12RootSignature>			m_rootSignature;
-		Microsoft::WRL::ComPtr<ID3D12PipelineState>			m_pipelineState;
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>		m_cbvHeap;
 		UINT												m_cbvDescriptorSize;
 		Microsoft::WRL::ComPtr<ID3D12Resource>				m_constantBuffer;
@@ -74,8 +79,6 @@ namespace Engine::Render::resource
 		D3D12_RESOURCE_BARRIER								m_endResBarrier;
 
 		TCHAR												ShaderPath[MAX_PATH] = {};
-		Microsoft::WRL::ComPtr<ID3DBlob>					m_vertexShader;
-		Microsoft::WRL::ComPtr<ID3DBlob>					m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D12Resource>				m_vertexBuffer;
 		Microsoft::WRL::ComPtr<ID3D12Resource>				m_indexBuffer;
 		D3D12_VERTEX_BUFFER_VIEW							m_vertexBufferView;
@@ -83,11 +86,33 @@ namespace Engine::Render::resource
 
 
 
-		//API_Resource_Manager
-		//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12RootSignature>	>			RootSignatures;
+		struct FrameResource
+		{
+
+		};
+		//				Pass
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12RootSignature>	>							RootSignatures;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>										Shaders;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>				PSO_DESCs;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>			>					PSO_States;
+
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>															RTV_Heap;
+		struct Handle_Array
+		{
+			CD3DX12_CPU_DESCRIPTOR_HANDLE  handles[8];
+		};
+
+
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>			>					PSO_States;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>			>					PSO_States;
+		//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12Resource>			>						RenderTargets;
+		/*std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>			InputLayouts;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_RASTERIZER_DESC>	>						Rasterizers;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_BLEND_DESC>	>							BlendStates;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_DEPTH_STENCIL_DESC>	>					Depth_Stencils;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_PRIMITIVE_TOPOLOGY>	>					TopoLogys;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_SAMPLER_DESC>	>							Samplers;*/
 		//PSO
-		//Shader
-		//Raster
 		//
 		// 
 		//

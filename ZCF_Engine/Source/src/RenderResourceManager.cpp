@@ -61,7 +61,7 @@ namespace Engine::Render::resource
 			NAME_D3D12_OBJECT(m_rootSignature);
 		}
 	}
-	void RenderResourceManager::CreatePSO()
+	void RenderResourceManager::CreatePSO(renderpass::RenderPassInfo)
 	{
 		CreateRootSignature();
 

@@ -1,6 +1,7 @@
 #include "Render/Renderer.h"
 #include "Render/SrcRenderHelper.h"
 #include "Render/RenderPass.h"
+#include "Render/RenderResourceManager.h"
 
 
 namespace Engine::Render::renderer
@@ -39,27 +40,52 @@ namespace Engine::Render::renderer
 		renderpass::LearnPassInfo LPI;
 		LPI.PassCollectBegin();
 		LPI.PassCollect();//	这里负责把假设的固定部分设置完?
-		LPI.Lamda = [&](const ComPtr<ID3D12GraphicsCommandList> CL,const resource::RenderResourceManager RRM )->void
-			{
-				CL.BeginPass();
-				CL.SetPSO				(RRM.GetPSO("Pname"));
-				//vs-ps
-				CL.SetVB(RRM.GetVBV("Pname","InR_name"));
-				CL.SetIB(RRM.GetIBV("Pname","InR_name"));
-				CL.SetViewPort();
-				CL.SetScissor();
-				CL.SetRenderTargets(Slot,RRM.GetDescriptor("Pname","OutR_name").num, RRM.GetDescroptor("pname","OutR_name").Data);
-				CL.ClearRT(...);
-				CL.SetDepthStencil(...);
-				//Cl.SetDescriptorHeaps();	主动指定,还是自己只指定Descriptor,然后由后端去自行绑定√
-				auto SRV = RRM.GetSRV("InR_name", "Pname");
-				auto CBV = RRM.GetCBV("InR_name", "Pname");
-				auto R1 = RRM.GetResource("Rname");
-				SRV.GPU_Virtual_Address = R1.GPU_Address;
-				//auto UAV相似
-				CL.DrawType();
-				CL.EndPass();
-			};
+		LPI.Lamda=[&](Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> CL, resource::RenderResourceManager RRM,
+			Microsoft::WRL::ComPtr<ID3D12Device> Device)->void
+		{
+
+			
+			CL->SetPipelineState(RRM.GetPSO(LPI.name));
+
+			CL->IASetVertexBuffers(0,1,RRM.GetVBV(LPI.name));
+
+			CL->OMSetRenderTargets(3,RRM.GetRTVs);
+
+
+
+
+				//CL.BeginPass();
+				//auto FR = RRM.GetFrameResource("Pname");
+				////vs-ps
+				//CL.SetVB(FR.GetVBV);
+				//CL.SetIB(RRM.GetIBV);
+				//CL.SetViewPort(FR.ViewPort);
+				//CL.SetScissor(FR.Scissor);
+				//auto RTVs = FR.RTVs
+				//		RTV_Handles[RTVs.num()];
+				//		int i=0;
+				//for (auto RTV : FR.RTVs)
+				// {
+				//		RTV_Handles[i++]=RTV.handle
+				// }
+				//CL.SetRenderTargets(RTVs.num(),RTV_Handles.data(),RTVs.Single,FR.DSV);
+				//CL.ClearRT(...);
+				// 
+				// 
+				// 
+				//auto SRV_Heap=FR.GetSRT_Heap()
+				// auto SRs = FR.GetSR(R1name)
+				//   for ( R ; SRs )  Device->CreateSRV(SRV_H , R.GPUVirtualAddress) 
+				//
+				// auto CBV_H = FR.GetCBV_H
+				//auto CRs = FR.GetCR("R2name");
+				//  for(R:CRs)   Device -> CreateCBV(CBV_H , R.GVA)
+				//CL.SetDesciptorHeap(SRV_H   ,  CBV_H );
+				//CL.SetDescriptorParemeters( SRV_H.Start ,   CBV_H.Start );
+				////UAV相似
+				//CL.DrawType();
+				//CL.EndPass();
+		};
 		
 		LPI.PassCollectEnd();
 
