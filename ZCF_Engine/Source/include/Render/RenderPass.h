@@ -2,16 +2,54 @@
 
 #include "Helper.h"
 #include "Buffer.h"
-#include "RenderFrameGraph.h"
-
+#include "Scene/SceneManager.h"
 
 namespace Engine::Render::renderpass
 {
+	///////////////////////////////////////////////////////PSO
+	struct  RootSignature
+	{
+
+	};
+	struct Shader
+	{
+		std::string		ShaderPath;
+		std::string		ShaderVersion;
+		std::string		ShaderMain;
+		//使用时候注意;用	string.c_str()	转换
+		uint16_t		ShaderFlags1;
+		uint16_t		ShaderFlags2;
+	};
+	/// <summary>
+	/// //////////////////////////////////////////////////////////////Resource
+	/// </summary>
+	enum ResourceInfoUsage
+	{
+
+		VBV,
+		IBV,
+		CBV,
+		UAV,
+		SRV,
+		DSV,
+		RTV,
+		SOV,
+		/*Barrier
+ 		Fence*/
+	};
+
+	struct ResourceInfo
+	{
+		std::string						name;
+		//  Poniter  如果资源已存在就有值, 否则置空等分配
+		std::optional<std::string>		Data;
+		ResourceInfoUsage				Usage;
+		//Write   Or   Read
+	};
+
 	class resource::RenderResourceManager;
-	//	主要起个收集,记录的作用,叫struct感觉也不错
-	//	单Pass,暂没考虑Passes	&	Frames
-	//	每个pass都是特化的,有一定假设存在
-	//	Pass有大,有小,有工程,有表现,有调试......
+
+
 	class RenderPassInfo
 	{
 	public:
@@ -28,45 +66,6 @@ namespace Engine::Render::renderpass
 		virtual void PassExcuteEnd();
 
 	public:
-		//	Pass本身
-		std::string																						name;
-		frameGraph::PassInfo																			PassInfo;
-		//	Pass内
-		//	PSO								PSO;
-		//只能由RFG调用了啊:	Renderer ->	RFG -> RRM ->RFG.Excute
-		std::function<void (Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, resource::RenderResourceManager , 
-			Microsoft::WRL::ComPtr<ID3D12Device> )>		Lamda;
-		//	Pass之间	&	Resource封装
-		std::vector<frameGraph::RFGResource>															InputResources;
-		std::vector<frameGraph::RFGResource>															OutputResources;
-
-
-
-		//PSO
-		struct RootSignature
-		{
-			uint16_t	Nums;
-			//待定
-		};
-		struct Shader
-		{
-			std::string		ShaderPath;
-			std::string		ShaderVersion;
-			std::string		ShaderMain;
-			//使用时候注意;用	string.c_str()	转换
-			uint16_t		ShaderFlags1;
-			uint16_t		ShaderFlags2;
-		};
-
-		struct BlendState
-		{
-
-		};
-
-
-
-
-		bool				isStreamOutPut;
 
 		//								PiplineState
 		//	形参:PSO
@@ -94,11 +93,6 @@ namespace Engine::Render::renderpass
 
 
 		//无论形参,实参都是有动态收集部分,和假设,自动部分
-		struct PSO
-		{
-			RootSignature SG;
-
-		};
 
 	};
 
@@ -115,8 +109,16 @@ namespace Engine::Render::renderpass
 		void PassCollect();
 		void PassCollectEnd();
 
-	private:
-
-
+	public:
+		//	Pass本身
+		std::string																						name;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, 
+			resource::RenderResourceManager,
+			Microsoft::WRL::ComPtr<ID3D12Device>)>														Lamda;
+		//	PSO
+		//	Resource
+		bool																							isStreamOutPut;
+		std::vector<ResourceInfo>							InResourceInfos;
+		std::vector<ResourceInfo>							OutResourceInfos;
 	};
 }

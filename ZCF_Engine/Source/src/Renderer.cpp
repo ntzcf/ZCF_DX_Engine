@@ -3,7 +3,11 @@
 #include "Render/RenderPass.h"
 #include "Render/RenderResourceManager.h"
 #include "Render/Buffer.h"
+#include "Render/RenderFrameGraph.h"
+
 using namespace resource::Buffer;
+using namespace frameGraph;
+using namespace renderpass;
 
 namespace Engine::Render::renderer
 {
@@ -88,57 +92,77 @@ namespace Engine::Render::renderer
 ///////////////////////////////////////////////////////		Scissor
 
 //////////////////////////////////////////////////////		RTV
-			//				num
+			//				num 
 			auto RTVnums = FGR->RenderTargets.size();
-			std::vector<CD3DX12_CPU_DESCRIPTOR_HANDLE>	RTVs(RTVnums);
 			//				handle
 			auto handle = ( FGR->RTV_Heap->GetCPUDescriptorHandleForHeapStart());
 			//				handle_Start
 			auto RTV_size = FGR->RTV_DescriptorSize;
 			INT64 RTV_start_Offset = FGR->RTV_StartIndex * RTV_size;
 			handle.ptr = SIZE_T(INT64(handle.ptr) + RTV_start_Offset);
+			//				RTVs
+			std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>	RTVs(RTVnums);
 			//				RTV_names
 			std::vector<std::string > RTV_names(RTVnums);
 			RTV_names.push_back( "RenderTarget" );
-			//				Handles
-			std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> Handles(RTVnums);
 			//				loop
 			for (int i = 0; i < RTVnums; i++)
 			{
 				Device->CreateRenderTargetView(FGR->RenderTargets[RTV_names[i]]->Resources.Get(), nullptr, handle);
-				Handles.push_back(handle);
+				RTVs.push_back(handle);
+				CL->ClearRenderTargetView(handle, 0, 0, nullptr);
 				handle.ptr = SIZE_T(INT64(handle.ptr) +RTV_size );
 			}
-			//				Set
-			CL->OMSetRenderTargets(RTVnums, Handles.data(), 1, FGR->DSV);
-			
+			//             DSV
+			CL->ClearDepthStencilView(*(FGR->DSV), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
+			//			Set
+			CL->OMSetRenderTargets(RTVnums, RTVs.data(), 1, FGR->DSV);
+			
+////////////////////////////////////////////////	CBV  SRV	Constant
+//			
 				//CL.BeginPass();
-				//CL.SetRenderTargets(RTVs.num(),RTV_Handles.data(),RTVs.Single,FR.DSV);
-				//CL.ClearRT(...);
-				// 
-				// 
-				// 
-				//auto SRV_Heap=FR.GetSRT_Heap()
-				// auto SRs = FR.GetSR(R1name)
-				//   for ( R ; SRs )  Device->CreateSRV(SRV_H , R.GPUVirtualAddress) 
-				//
-				// auto CBV_H = FR.GetCBV_H
-				//auto CRs = FR.GetCR("R2name");
-				//  for(R:CRs)   Device -> CreateCBV(CBV_H , R.GVA)
 				//CL.SetDesciptorHeap(SRV_H   ,  CBV_H );
 				//CL.SetDescriptorParemeters( SRV_H.Start ,   CBV_H.Start );
 				////UAV相似
 				//CL.DrawType();
 				//CL.EndPass();
-		};
-		
+		};	
 		LPI.PassCollectEnd();
 
+////////////////////////////////////////////////////////////////RFG
 
-		//RFG Pass & Resource Info	-->	RFG	-->	RRM
+		frameGraph::RenderFrameGraph RFG;
 
-		//RRM.CreatePassResource(&PassInfo)
-		RRM->CreateLearnPassResource(std::move(LPI));
+		frameGraph::RFGPassInfo			Pass;
+		Pass.name = "LearnPass";
+		Pass.QueueType = frameGraph::RFGPassQueueType::Graphics;
+		
+		int size = LPI.InResourceInfos.size();
+		for (int i = 0; i < size; i++)
+		{
+			frameGraph::RFGResourceInfo RI;
+			RI.name = LPI.InResourceInfos[i].name;
+			RFG.Add_Read_Resource(RI);
+			Pass.Reads.push_back(std::move(RI));
+		}
+
+		size = LPI.OutResourceInfos.size();
+		for (int i = 0; i < size; i++)
+		{
+			frameGraph::RFGResourceInfo RI;
+			RI.name = LPI.OutResourceInfos[i].name;
+			RFG.Add_Write_Resource(RI);
+			Pass.Writes.push_back(std::move(RI));
+		}
+
+		RFG.Add_Pass(std::move(Pass));
+
+		//		还要管理资源,和Pass的具体内部信息,	裁剪时可以选择少发送一些请求.
+		//		好麻烦啊啊啊
+
+		//		RFG的整合(预创建对象,同步对象),编译,执行
+		//		统一执行, 局部独立执行
+		//		全局对象注册............
 	}
 }

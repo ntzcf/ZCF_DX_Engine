@@ -10,8 +10,8 @@ namespace Engine::Render::resource
 {
 	class RenderResourceManager
 	{
-		struct FrameGraphicsResource;
-		struct FrameComputeResource;
+		struct FrameGraphicsPassResource;
+		struct FrameComputePassResource;
 
 
 	public:
@@ -27,13 +27,13 @@ namespace Engine::Render::resource
 		void CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI);
 		void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
 
-		FrameGraphicsResource* GetFrameGraphicsResource(std::string name) {
+		FrameGraphicsPassResource* GetFrameGraphicsResource(std::string name) {
 			return &FrameGraphicsPassResources[name];
 		};
 
-		FrameComputeResource GetFrameComputeResource(std::string name)
+		FrameComputePassResource* GetFrameComputeResource(std::string name)
 		{
-			return FrameComputePassResources[name];
+			return &FrameComputePassResources[name];
 		}
 
 	private:
@@ -70,8 +70,8 @@ namespace Engine::Render::resource
 
 
 
-
-		struct FrameGraphicsResource
+		 //							Frame	Graphics  Runtime
+		struct FrameGraphicsPassResource
 		{
 		public:
 			
@@ -84,7 +84,7 @@ namespace Engine::Render::resource
 			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	CBV_Heap;
 			D3D12_VERTEX_BUFFER_VIEW*						VBV;
 			D3D12_VERTEX_BUFFER_VIEW*						IBV;
-			CD3DX12_CPU_DESCRIPTOR_HANDLE*					DSV;
+			D3D12_CPU_DESCRIPTOR_HANDLE*					DSV;
 
 
 			//	  如果放基类指针  使用时记得用	Dynamic_cast	转换一下
@@ -96,31 +96,34 @@ namespace Engine::Render::resource
 			//CBV
 
 		};
-
-		std::unordered_map<std::string, FrameGraphicsResource>								FrameGraphicsPassResources;
+		std::unordered_map<std::string, FrameGraphicsPassResource>								FrameGraphicsPassResources;
 		
-		struct FrameComputeResource
+		//							Frame	Compute	Runtime
+		struct FrameComputePassResource
 		{
 
 		};
+		std::unordered_map<std::string, FrameComputePassResource>								FrameComputePassResources;
 
-		std::unordered_map<std::string, FrameComputeResource>								FrameComputePassResources;
+		//							Frames  Resource
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		//
+		//									Cache	&	Debug
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>										Shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>				PSO_DESCs;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>			>					PSO_States;
 			
-		//																	
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr< ID3D12Resource>	>								API_Resources;
 
 
-		//
+		//									ALL_My_Resource
 		std::vector<Buffer::V_I_Buffer>					V_I_Buffers;
 		std::vector<Buffer::ConstantBuffer>				ConstantBuffers;
 		//Constant  ------- Bindless
 		std::vector<Buffer::InstanceBuffer>				InstanceBuffers;
+		std::vector<Buffer::UAV_Buffer>					ComputeBuffers;
 
+		//									ALL_API_Resource								
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr< ID3D12Resource>	>								API_Resources;
 
 
 

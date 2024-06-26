@@ -34,8 +34,14 @@
     <ClInclude Include="Source\include\Render\RenderPass.h" />
     <ClInclude Include="Source\include\Render\RenderResourceManager.h" />
     <ClInclude Include="Source\include\Render\SrcRenderHelper.h" />
+    <ClInclude Include="Source\include\Scene\Scene_Helper.h" />
+    <ClInclude Include="Source\include\Scene\Lights.h" />
+    <ClInclude Include="Source\include\Scene\Loader.h" />
+    <ClInclude Include="Source\include\Scene\Materials.h" />
     <ClInclude Include="Source\include\Scene\Scene.hpp" />
     <ClInclude Include="Source\include\Scene\SceneManager.h" />
+    <ClInclude Include="Source\include\Scene\SceneObjects.h" />
+    <ClInclude Include="Source\include\Scene\S_Texture.h" />
     <ClInclude Include="Source\include\ZCF_engine.h" />
   </ItemGroup>
   <ItemGroup>

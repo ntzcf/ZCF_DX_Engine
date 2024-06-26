@@ -3,17 +3,6 @@
 
 namespace Engine::Render::resource
 {
-
-	void RenderResourceManager::Update()
-	{
-		DW.Update();
-		m_commandAllocator	=	DW.GetCommandAllocator();
-		m_renderTarget		=	DW.GetRenderTarget();
-		m_frameIndex		=	DW.GetCurrentFrameIndex();
-
-
-	}
-
 	void RenderResourceManager::Init(HWND window, int width, int height)
 	{
 		DW.Init(window, width, height);
@@ -26,18 +15,18 @@ namespace Engine::Render::resource
 		m_commandAllocator	=	DW.GetCommandAllocator();
 		m_renderTarget		=	DW.GetRenderTarget();
 		m_frameIndex		=	DW.GetCurrentFrameIndex();
-
-
-		m_viewPort = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
-		m_scissorRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-
-		/*CreateRootSignature();
-		CreatePSO();
-		CreateCmdList();
-		CreateFenceAndEvent();
-		CreateBarrier();
-		CreateVertexBuffer();*/
 	}
+
+	void RenderResourceManager::Update()
+	{
+		DW.Update();
+		m_commandAllocator	=	DW.GetCommandAllocator();
+		m_renderTarget		=	DW.GetRenderTarget();
+		m_frameIndex		=	DW.GetCurrentFrameIndex();
+
+
+	}
+
 
 
 	void RenderResourceManager::CreateRootSignature()

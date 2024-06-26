@@ -22,7 +22,7 @@ namespace Engine::Render::resource::Buffer
 		RenderTarget,
 	};
 
-	enum ResourceFormat
+	enum class ResourceFormat
 	{
 		R8_G8_B8_A8
 
@@ -147,7 +147,7 @@ namespace Engine::Render::resource::Buffer
 	};
  
 	//		UAV
-	class UAV_buffer :public BaseBuffer
+	class UAV_Buffer :public BaseBuffer
 	{
 
 	};

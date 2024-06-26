@@ -1,7 +1,10 @@
 #pragma once
 
+#include "SceneObjects.h"
+#include "Lights.h"
+#include "Materials.h"
 
-namespace Engine::scene
+namespace Engine::scene::Manager
 {
 	class SceneManager
 	{
@@ -22,6 +25,8 @@ namespace Engine::scene
 
 
 	private:
+
+		std::vector<Object::OBJ_Object>		Primitives;
 
 	};
 }
