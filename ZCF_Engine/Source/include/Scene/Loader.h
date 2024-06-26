@@ -2,6 +2,7 @@
 
 #include "Scene_Helper.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION 
 #include "tinyobjloader-release/tiny_obj_loader.h"
 
 namespace Engine::scene::Loader

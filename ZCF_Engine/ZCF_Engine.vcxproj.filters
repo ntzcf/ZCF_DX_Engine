@@ -33,6 +33,9 @@
     <Filter Include="include\Render\Resource">
       <UniqueIdentifier>{c9a52d81-d219-4c6f-9367-bb96a7365f95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{ffe94077-445d-4732-bcdc-7adc2080ac7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\include\Common\Vertex\Vertex.h">
@@ -106,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="Source\include\Scene\S_Texture.h">
       <Filter>include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\thirdparty\stb\stb_image.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\thirdparty\tinyobjloader-release\tiny_obj_loader.h">
+      <Filter>ThirdParty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

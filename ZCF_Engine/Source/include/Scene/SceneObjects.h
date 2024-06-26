@@ -8,23 +8,25 @@
 
 namespace Engine::scene::Object
 {
-	class OBJ_Object
+	class Ting_OBJ_Object
 	{
 	public:
-		OBJ_Object();
-		~OBJ_Object();
+		Ting_OBJ_Object();
+		~Ting_OBJ_Object();
 
 	private:
 
-		Loader::Tiny_OBJ_Loader		Loader;
-		Materials::PBR_Materials	Materials;
+		//		顶点属性 & 数据			拓扑属性 & 数据		材质属性 & 数据
+
+		Loader::Tiny_OBJ_Loader				Loader;
+		Materials::Tiny_OBJ_Material		Material;
 	};
 
-	OBJ_Object::OBJ_Object()
+	Ting_OBJ_Object::Ting_OBJ_Object()
 	{
 	}
 
-	OBJ_Object::~OBJ_Object()
+	Ting_OBJ_Object::~Ting_OBJ_Object()
 	{
 	}
 
