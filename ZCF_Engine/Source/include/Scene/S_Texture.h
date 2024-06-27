@@ -14,10 +14,13 @@ namespace Engine::scene::S_Texture
 		Tiny_OBJ_Texture();
 		~Tiny_OBJ_Texture();
 
+
+		std::string		name;
+		uint32_t		size;
+		//Data
+		std::vector<uint32_t>	Texture_Data;
 	private:
 		
-		uint32_t	size;
-		tinyobj::material_t* Ting_Material;
 
 	};
 

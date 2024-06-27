@@ -98,7 +98,7 @@
     <ClInclude Include="Source\include\Scene\Materials.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Scene\SceneObjects.h">
+    <ClInclude Include="Source\include\Scene\SceneObject.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Scene\Scene_Helper.h">
@@ -115,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="Source\thirdparty\tinyobjloader-release\tiny_obj_loader.h">
       <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameLogic\DX_Camera.h">
+      <Filter>include\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameLogic\Game_Timer.h">
+      <Filter>include\GameLogic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +146,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\RenderPass.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\SceneObject.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\DX_Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Game_Timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

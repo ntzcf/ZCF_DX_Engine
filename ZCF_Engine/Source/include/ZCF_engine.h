@@ -15,7 +15,8 @@ public:
 
 private:
 	//GameLogic
-	Engine::Camera												Camera;
+	Engine::GameLogic::camera::DX_Camera						Camera;
+	Engine::GameLogic::timer ::GameTimer						Timer;
 	//Scene
 	Engine::scene::SceneManager									SceneManager;
 	//Render

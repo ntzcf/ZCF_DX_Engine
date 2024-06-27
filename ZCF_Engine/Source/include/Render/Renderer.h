@@ -15,7 +15,7 @@ public:
 	void Update();
 	void run();
 
-	resource::RenderResourceManager* RRM;
+	//resource::RenderResourceManager* RRM;
 
 private:
 	void Render();

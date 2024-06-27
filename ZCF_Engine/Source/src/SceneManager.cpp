@@ -8,32 +8,36 @@ namespace Engine::scene
 
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	void SceneManager::Update()
 	{
+
 	}
 
 	void SceneManager::run()
 	{
+
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

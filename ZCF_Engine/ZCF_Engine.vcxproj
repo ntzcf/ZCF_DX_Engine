@@ -22,7 +22,9 @@
     <ClInclude Include="Source\include\Common\Camera.h" />
     <ClInclude Include="Source\include\Common\Common.hpp" />
     <ClInclude Include="Source\include\Common\Vertex\Vertex.h" />
+    <ClInclude Include="Source\include\GameLogic\DX_Camera.h" />
     <ClInclude Include="Source\include\GameLogic\GameLogic.hpp" />
+    <ClInclude Include="Source\include\GameLogic\Game_Timer.h" />
     <ClInclude Include="Source\include\Headers.hpp" />
     <ClInclude Include="Source\include\Render\Buffer.h" />
     <ClInclude Include="Source\include\Render\d3dx12.h" />
@@ -40,7 +42,7 @@
     <ClInclude Include="Source\include\Scene\Materials.h" />
     <ClInclude Include="Source\include\Scene\Scene.hpp" />
     <ClInclude Include="Source\include\Scene\SceneManager.h" />
-    <ClInclude Include="Source\include\Scene\SceneObjects.h" />
+    <ClInclude Include="Source\include\Scene\SceneObject.h" />
     <ClInclude Include="Source\include\Scene\S_Texture.h" />
     <ClInclude Include="Source\include\ZCF_engine.h" />
     <ClInclude Include="Source\thirdparty\stb\stb_image.h" />
@@ -48,9 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\Buffer.cpp" />
+    <ClCompile Include="Source\src\DX_Camera.cpp" />
+    <ClCompile Include="Source\src\Game_Timer.cpp" />
     <ClCompile Include="Source\src\RenderPass.cpp" />
     <ClCompile Include="Source\src\RenderResourceManager.cpp" />
     <ClCompile Include="Source\src\SceneManager.cpp" />
+    <ClCompile Include="Source\src\SceneObject.cpp" />
     <ClCompile Include="Source\src\ZCF_engine.cpp" />
     <ClCompile Include="Source\src\Headers.cpp" />
     <ClCompile Include="Source\src\Renderer.cpp" />

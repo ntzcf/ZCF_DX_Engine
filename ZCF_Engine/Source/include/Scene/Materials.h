@@ -15,8 +15,10 @@ namespace Engine::scene::Materials
 
 	//};
 
-	enum  Texture_Attributes
+	enum  class S_Texture_Attribute
 	{
+		BaseColor,
+		//								Texture					ConstantBuffer					Constant
 		//				Pong
 		ambient,
 		diffuse,
@@ -36,16 +38,25 @@ namespace Engine::scene::Materials
 		BRDF		//		‘§º∆À„Ã˘Õº   (Frenel,Roughness)
 	};
 
+	struct S_Constant
+	{
+		std::string		name;
+		uint32_t		Value;
+	};
+
 	class Tiny_OBJ_Material
 	{
 	public:
 		Tiny_OBJ_Material();
 		~Tiny_OBJ_Material();
 
+
+		std::string													name;
+		std::unordered_map < S_Texture_Attribute ,	uint32_t>		Textures;
+		std::unordered_map < std::string		 ,	uint32_t>		Constants;
+		//PSO	: RootSignature , Shader , Sample , BlendeMode............
 	private:
 
-		//PSO	: RootSignature , Shader , Sample , BlendeMode............
-		std::unordered_map < Texture_Attributes , S_Texture::Tiny_OBJ_Texture >		Textures;
 		
 	};
 
