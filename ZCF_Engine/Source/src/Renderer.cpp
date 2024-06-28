@@ -119,7 +119,7 @@ namespace Engine::Render::renderer
 			//			Set
 			CL->OMSetRenderTargets(RTVnums, RTVs.data(), 1, FGR->DSV);
 			
-////////////////////////////////////////////////	CBV  SRV	Constant
+////////////////////////////////////////////////	CBV  SRV	Constant----------------Bindless Texture
 //			
 				//CL.BeginPass();
 				//CL.SetDesciptorHeap(SRV_H   ,  CBV_H );

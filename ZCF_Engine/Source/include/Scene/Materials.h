@@ -41,14 +41,14 @@ namespace Engine::scene::Materials
 	struct S_Constant
 	{
 		std::string		name;
-		uint32_t		Value;
+		float			Value;
 	};
 
-	class Tiny_OBJ_Material
+	class CommonMaterial
 	{
 	public:
-		Tiny_OBJ_Material();
-		~Tiny_OBJ_Material();
+		CommonMaterial() {};
+		~CommonMaterial() {};
 
 
 		std::string													name;
@@ -59,13 +59,5 @@ namespace Engine::scene::Materials
 
 		
 	};
-
-	Tiny_OBJ_Material::Tiny_OBJ_Material()
-	{
-	}
-
-	Tiny_OBJ_Material::~Tiny_OBJ_Material()
-	{
-	}
 
 }

@@ -44,6 +44,7 @@
     <ClInclude Include="Source\include\Scene\SceneManager.h" />
     <ClInclude Include="Source\include\Scene\SceneObject.h" />
     <ClInclude Include="Source\include\Scene\S_Texture.h" />
+    <ClInclude Include="Source\include\Scene\S_Vertex.h" />
     <ClInclude Include="Source\include\ZCF_engine.h" />
     <ClInclude Include="Source\thirdparty\stb\stb_image.h" />
     <ClInclude Include="Source\thirdparty\tinyobjloader-release\tiny_obj_loader.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="Source\src\Buffer.cpp" />
     <ClCompile Include="Source\src\DX_Camera.cpp" />
     <ClCompile Include="Source\src\Game_Timer.cpp" />
+    <ClCompile Include="Source\src\Loader.cpp" />
     <ClCompile Include="Source\src\RenderPass.cpp" />
     <ClCompile Include="Source\src\RenderResourceManager.cpp" />
     <ClCompile Include="Source\src\SceneManager.cpp" />

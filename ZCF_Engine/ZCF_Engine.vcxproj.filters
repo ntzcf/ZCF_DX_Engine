@@ -122,6 +122,9 @@
     <ClInclude Include="Source\include\GameLogic\Game_Timer.h">
       <Filter>include\GameLogic</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Scene\S_Vertex.h">
+      <Filter>include\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\ZCF_engine.cpp">
@@ -155,6 +158,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\Game_Timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\Loader.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

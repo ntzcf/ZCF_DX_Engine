@@ -1,16 +1,18 @@
-#include "zcf_engine.h"
-
+#include "ZCF_engine.h"
 
 
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
+bool InitWindow(HINSTANCE instanceHandle, int show);
+
+int									iWidth = 1024;
+int									iHeight = 768;
+
+HWND								hWnd = nullptr;
+
+
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpCmdLine, int nCmdShow)
 {
-
-	int									iWidth = 1024;
-	int									iHeight = 768;
-
-	HWND								hWnd = nullptr;
 	MSG									msg = {};
 	TCHAR								AppPath[MAX_PATH] = {};
 
@@ -42,49 +44,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    l
 	}
 
 	// 创建窗口
+	if (!InitWindow(hInstance, nCmdShow))
 	{
-		WNDCLASSEX wcex = {};
-		wcex.cbSize = sizeof(WNDCLASSEX);
-		wcex.style = CS_GLOBALCLASS;
-		wcex.lpfnWndProc = WndProc;
-		wcex.cbClsExtra = 0;
-		wcex.cbWndExtra = 0;
-		wcex.hInstance = hInstance;
-		wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wcex.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);		//防止无聊的背景重绘
-		wcex.lpszClassName = _T("zcf");
-		RegisterClassEx(&wcex);
-
-		DWORD dwWndStyle = WS_OVERLAPPED | WS_SYSMENU;
-		RECT rtWnd = { 0, 0, iWidth, iHeight };
-		AdjustWindowRect(&rtWnd, dwWndStyle, FALSE);
-
-		// 计算窗口居中的屏幕坐标
-		INT posX = (GetSystemMetrics(SM_CXSCREEN) - rtWnd.right - rtWnd.left) / 2;
-		INT posY = (GetSystemMetrics(SM_CYSCREEN) - rtWnd.bottom - rtWnd.top) / 2;
-
-		hWnd = CreateWindowW(
-			_T("zcf")
-			, _T("zcf engine")
-			, dwWndStyle
-			, posX
-			, posY
-			, rtWnd.right - rtWnd.left
-			, rtWnd.bottom - rtWnd.top
-			, nullptr
-			, nullptr
-			, hInstance
-			, nullptr);
-
-		if (!hWnd)
-		{
-			return FALSE;
-		}
-
-		ShowWindow(hWnd, nCmdShow);
-		UpdateWindow(hWnd);
+		return 0;
 	}
+
+	//			Engine
 	ZCF_Engine engine;
+	//			Init
 	engine.Init(hWnd, iWidth, iHeight);
 
 	while (GetMessage(&msg, NULL, 0, 0) > 0) 
@@ -94,47 +61,52 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    l
 		DispatchMessage(&msg);
 
 	}
+}
 
-	/*HANDLE								hEventFence = nullptr;
-	DWORD dwRet = 0;
-	BOOL bExit = FALSE;
-	SetEvent(hEventFence);*/
-	//while (!bExit)
-	//{
-	//	dwRet = ::MsgWaitForMultipleObjects(1, &hEventFence, FALSE, INFINITE, QS_ALLINPUT);
-	//	switch (dwRet - WAIT_OBJECT_0)
-	//	{
-	//		case 0:	{	engine.run();	}
-	//		break;
-	//		case 1:
-	//		{//处理消息
-	//			while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	//			{
-	//				if (WM_QUIT != msg.message)
-	//				{
-	//					::TranslateMessage(&msg);
-	//					::DispatchMessage(&msg);
-	//				}
-	//				else
-	//				{
-	//					bExit = TRUE;
-	//				}
-	//			}
-	//		}
-	//		break;
-	//		case WAIT_TIMEOUT:
-	//		{
+bool InitWindow(HINSTANCE hInstance, int show)
+{
 
-	//		}
-	//		break;
-	//		default:
-	//			break;
-	//	}
-	//}
-	/*catch (com_exception& e)
+	WNDCLASSEX wcex = {};
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_GLOBALCLASS;
+	wcex.lpfnWndProc = WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);		//防止无聊的背景重绘
+	wcex.lpszClassName = _T("zcf");
+	RegisterClassEx(&wcex);
+
+	DWORD dwWndStyle = WS_OVERLAPPED | WS_SYSMENU;
+	RECT rtWnd = { 0, 0, iWidth, iHeight };
+	AdjustWindowRect(&rtWnd, dwWndStyle, FALSE);
+
+	// 计算窗口居中的屏幕坐标
+	INT posX = (GetSystemMetrics(SM_CXSCREEN) - rtWnd.right - rtWnd.left) / 2;
+	INT posY = (GetSystemMetrics(SM_CYSCREEN) - rtWnd.bottom - rtWnd.top) / 2;
+
+	hWnd = CreateWindowW(
+		_T("zcf")
+		, _T("zcf engine")
+		, dwWndStyle
+		, posX
+		, posY
+		, rtWnd.right - rtWnd.left
+		, rtWnd.bottom - rtWnd.top
+		, nullptr
+		, nullptr
+		, hInstance
+		, nullptr);
+
+	if (!hWnd)
 	{
-		e;
-	}*/
+		MessageBox(0, L"CreateWindow FALIED", 0, 0);
+		return FALSE;
+	}
+
+	ShowWindow(hWnd, show);
+	UpdateWindow(hWnd);
 }
 
 
@@ -146,6 +118,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	//case WM_KEYDOWN:		//键盘键被按下
+	//	if (wParam == VK_ESCAPE)
+	//	{
+	//		DestoryWindow(g_hMainWnd);
+	//		return 0;
+	//	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
