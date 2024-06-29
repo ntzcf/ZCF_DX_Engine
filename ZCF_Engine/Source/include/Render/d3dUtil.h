@@ -21,6 +21,7 @@
 #include <cassert>
 #include <functional>
 #include <unordered_map>
+#include <optional>
 #include "d3dx12.h"
 //#include "DDSTextureLoader.h"
 #include "MathHelper.h"

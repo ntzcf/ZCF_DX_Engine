@@ -71,9 +71,6 @@
     <ClInclude Include="Source\include\Render\d3dx12.h">
       <Filter>include\Render\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\Helper.h">
-      <Filter>include\Render\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Render\Buffer.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
@@ -125,6 +122,15 @@
     <ClInclude Include="Source\include\Scene\S_Vertex.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Render\d3dUtil.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\MathHelper.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\UploadBuffer.h">
+      <Filter>include\Render\Helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\ZCF_engine.cpp">
@@ -161,6 +167,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\Loader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\d3dUtil.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\MathHelper.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

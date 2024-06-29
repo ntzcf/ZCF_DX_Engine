@@ -4,7 +4,23 @@
 
 namespace Engine::Render::resource::Buffer
 {
+	enum ResourceInfoUsage
+	{
 
+		VBV,
+		IBV,
+		CBV,
+		RCV,//		Root Constant Value(View)
+		SRV,
+		DSV,
+		RTV,
+
+		UAV,
+
+		//SOV,
+		/*Barrier
+		Fence*/
+	};
 
 
 	enum class ResourceType
@@ -12,14 +28,17 @@ namespace Engine::Render::resource::Buffer
 		Null,
 		Vertex,
 		Index,
-		Constant,
+
 		Instance,
+		
+		Constant,
+		Constant_Buffer,
+		
 		Texture_2D,
 		Texture_3D,
 		Texture_Array,
+		
 		Sampler,
-
-		RenderTarget,
 	};
 
 	enum class ResourceFormat
@@ -34,9 +53,12 @@ namespace Engine::Render::resource::Buffer
 
 		Position,
 		Normal,
+		tangent,
+		BaseColor,
 		UV0,
 		UV1,
 		UV2,
+		UV3,
 	};
 
 
@@ -56,28 +78,57 @@ namespace Engine::Render::resource::Buffer
 
 	};
 
+	union Data
+	{
 
-	class V_I_Buffer :public BaseBuffer
+		std::vector<float>		VertexData;
+		std::vector<uint32_t>	IndexData;
+	};
+	
+	class VertexBuffer :public BaseBuffer
 	{
 	public:
-		V_I_Buffer() {};
-		~V_I_Buffer() {};
+		VertexBuffer() {};
+		~VertexBuffer() {};
 
 		VertexAttribute		GetAttribute() 				{	return	Attribute;	};
 		ResourceType		GetType()		override	{	return	Type;};
 
 		std::string				Name;
+
+		VertexAttribute			Attribute;
+		
 		ResourceType			Type;
 		ResourceFormat			Format;
 
-		VertexAttribute			Attribute;
 
 		uint32_t				Size;
 		uint32_t				OneBits;
 		uint32_t				Nums;
 
-		Microsoft::WRL::ComPtr<ID3D12Resource>			Resource;
+		std::vector<float>		VertexData;
+	};
 
+	class IndexBuffer :public BaseBuffer
+	{
+	public:
+		IndexBuffer() {};
+		~IndexBuffer() {};
+
+		
+		ResourceType		GetType()		override { return	Type; };
+
+		std::string				Name;
+
+		ResourceType			Type;
+		ResourceFormat			Format;
+
+
+		uint32_t				Size;
+		uint32_t				OneBits;
+		uint32_t				Nums;
+
+		std::vector<uint32_t>		VertexData;
 	};
 
 
