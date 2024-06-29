@@ -1,8 +1,10 @@
 #pragma once
 #include "RenderFrameGraph.h"
 #include "d3dUtil.h"
-#include "RenderResourceManager.h"
 #include "RenderPass.h"
+#include "Scene/SceneManager.h"
+
+class RenderResourceManager;
 
 namespace Engine::Render::renderer
 {
@@ -25,7 +27,7 @@ private:
 	void RenderEnd();
 	
 	//死码
-	void LearnPass();
+	//void LearnPass();
 
 	void PassBegin();
 	void PassEnd();
@@ -58,7 +60,17 @@ private:
 
 	std::shared_ptr<frameGraph::RenderFrameGraph>		RFGs[2];
 	
-	std::vector<renderpass::DepthPass>					DepthPasses;
+	std::vector<renderpass::DepthPassInfo>					DepthPasses;
+	std::vector<renderpass::GBufferPassInfo>				GBufferPasses;
+	std::vector<renderpass::LightingPassInfo>				LightingPasses;
+	std::vector<renderpass::MaterialPassInfo>				MaterialPasses;
+
+	//						统一收集Texture , ConstantBuffer , RootConstant 然后交给RRM上传
+	// 
+	// 
+	// 
+
+
 
 		// 常量缓冲区大小必须都是 256 字节的整数倍。
 		//static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;

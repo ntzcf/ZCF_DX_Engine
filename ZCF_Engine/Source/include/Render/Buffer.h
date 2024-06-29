@@ -31,7 +31,7 @@ namespace Engine::Render::resource::Buffer
 
 		Instance,
 		
-		Constant,
+		Root_Constant,
 		Constant_Buffer,
 		
 		Texture_2D,
@@ -49,8 +49,6 @@ namespace Engine::Render::resource::Buffer
 
 	enum class VertexAttribute
 	{
-		Index,
-
 		Position,
 		Normal,
 		tangent,
@@ -60,6 +58,50 @@ namespace Engine::Render::resource::Buffer
 		UV2,
 		UV3,
 	};
+
+
+	struct ResourceInfo
+	{
+		std::string								name;
+
+		resource::Buffer::ResourceFormat		Foramt;
+		resource::Buffer::ResourceType			Type;
+
+		uint32_t								Width;
+		uint32_t								Height;
+
+		bool									Frames;
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	 class BaseBuffer

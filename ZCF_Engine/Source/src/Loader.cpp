@@ -124,8 +124,8 @@ namespace Engine::scene::Loader
 
 		Object.Index_Length = localIndices.size();
 		
-		*SceneManager::GetVertexCommonNums() += 3 * nums;
-		*SceneManager::GetIndexNums() += localIndices.size();
+		*SceneManager::GetVertexCommonNums()	+=	Vertexs.size();
+		*SceneManager::GetIndexNums()			+=	localIndices.size();
 		//			·ÅÈëSceneManagerÖÐ
 		SceneManager::GetVAS()->at(Object::Vertex_Attribute::Position).emplace_back(std::move(Vertexs));
 		SceneManager::GetVAS()->at(Object::Vertex_Attribute::Normal).emplace_back(std::move(Normals));
@@ -135,20 +135,20 @@ namespace Engine::scene::Loader
 		for (int i = 0; i < UV_nums; i++)
 		{
 			if (i == 0)
-				Object.Vertex_2DTex.UV0_Start = *(SceneManager::GetUV_Nums());
-				*(SceneManager::GetUV_Nums()) += UVs[0].size();
+				Object.Vertex_2DTex.UV0_Start = *(SceneManager::GetUV0_Nums());
+				*(SceneManager::GetUV0_Nums()) += UVs[0].size();
 				SceneManager::GetVAS()->at(Object::Vertex_Attribute::UV0).emplace_back(std::move(UVs[0]));
 			if (i == 1)
-				Object.Vertex_2DTex.UV1_Start = *(SceneManager::GetUV_Nums());
-				//*(SceneManager::GetUV1_Nums()) += UVs[1].size();
+				Object.Vertex_2DTex.UV1_Start = *(SceneManager::GetUV1_Nums());
+				*(SceneManager::GetUV1_Nums()) += UVs[1].size();
 				SceneManager::GetVAS()->at(Object::Vertex_Attribute::UV1).emplace_back(std::move(UVs[1]));
 			if (i == 2)
-				Object.Vertex_2DTex.UV2_Start = *(SceneManager::GetUV_Nums());
-				//*(SceneManager::GetUV2_Nums()) += UVs[2].size();
+				Object.Vertex_2DTex.UV2_Start = *(SceneManager::GetUV2_Nums());
+				*(SceneManager::GetUV2_Nums()) += UVs[2].size();
 				SceneManager::GetVAS()->at(Object::Vertex_Attribute::UV2).emplace_back(std::move(UVs[2]));
 			if (i == 3)
-				Object.Vertex_2DTex.UV3_Start = *(SceneManager::GetUV_Nums());
-				//*(SceneManager::GetUV3_Nums()) += UVs[3].size();
+				Object.Vertex_2DTex.UV3_Start = *(SceneManager::GetUV3_Nums());
+				*(SceneManager::GetUV3_Nums()) += UVs[3].size();
 				SceneManager::GetVAS()->at(Object::Vertex_Attribute::UV3).emplace_back(std::move(UVs[3]));
 		}
 		

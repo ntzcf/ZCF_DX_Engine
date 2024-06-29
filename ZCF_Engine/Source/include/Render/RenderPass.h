@@ -7,6 +7,8 @@
 namespace Engine::Render::renderpass
 {
 	class resource::RenderResourceManager;
+	class resource::FrameGraphicsPassResource;
+	class resource::FrameComputePassResource;
 
 	///////////////////////////////////////////////////////PSO
 	//		//									ALL_My_Buffer_Resource
@@ -45,19 +47,6 @@ namespace Engine::Render::renderpass
 	/// </summary>
 	/// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-	struct ResourceInfo
-	{
-		std::string								name;
-		
-		resource::Buffer::ResourceFormat		Foramt;
-		resource::Buffer::ResourceType			Type;
-
-		uint32_t								Width;
-		uint32_t								Height;
-
-		bool									Frames;
-	};
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,16 +113,15 @@ namespace Engine::Render::renderpass
 
 	class DepthPassInfo : public Pass_Mat_Info
 	{
+	public:
 		DepthPassInfo() {};
 		~DepthPassInfo() {};
 
 	public:
-		std::string				Pname;
-		std::string				Mname;
+		std::string				PassName;
+		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
-			resource::RenderResourceManager,
-			Microsoft::WRL::ComPtr<ID3D12Device>)>				Lamda;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, resource::FrameGraphicsPassResource)>				Lamda;
 		//		Queue
 		bool					isGraphics;
 		//		PSO
@@ -152,8 +140,8 @@ namespace Engine::Render::renderpass
 		GBufferPassInfo() {};
 		~GBufferPassInfo() {};
 
-		std::string				Pname;
-		std::string				Mname;
+		std::string				PassName;
+		std::string				MaterialName;
 
 		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
 			resource::RenderResourceManager,
@@ -165,7 +153,7 @@ namespace Engine::Render::renderpass
 		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>				Vertex_Attribute_Steam;
 		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				IndexBuffer;
 		//				GBuffer1		GBuffer2		GBuffer3		GBuffer4		GBuffer5
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
 
 	};
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,17 +163,15 @@ namespace Engine::Render::renderpass
 		LightingPassInfo() {};
 		~LightingPassInfo() {};
 
-		std::string				Pname;
-		std::string				Mname;
+		std::string				PassName;
+		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
-			resource::RenderResourceManager,
-			Microsoft::WRL::ComPtr<ID3D12Device>)>				Lamda;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,resource::FrameComputePassResource)>				Lamda;
 
 		bool					isGraphics;
 			//		Compute
 		//			IN				OUT:UAV
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
 
 	};
 
@@ -197,8 +183,8 @@ namespace Engine::Render::renderpass
 		MaterialPassInfo() {};
 		~MaterialPassInfo() {};
 	public:
-		std::string				Pname;//	Pass
-		std::string				Mname;//	Material
+		std::string				PassName;
+		std::string				MaterialName;
 
 		bool					isGraphics;
 
@@ -211,7 +197,7 @@ namespace Engine::Render::renderpass
 		//			PSO
 		PSO						PSO;
 		//  Input		Data		&		Attribute   : 
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
 		//	Output		Buffer		Attribute:	Name , Type , Format , Size , ............
 		
 		//	Queue Type

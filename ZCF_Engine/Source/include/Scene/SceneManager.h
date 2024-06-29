@@ -34,7 +34,10 @@ namespace Engine::scene
 
 		static uint32_t*		GetVertexCommonNums() { return &VertexCommonNums; };
 		static uint32_t*		GetIndexNums() { return &IndexNums; };
-		static uint32_t*		GetUV_Nums() { return &UV_Nums; };
+		static uint32_t*		GetUV0_Nums() { return &UV0_Nums; };
+		static uint32_t*		GetUV1_Nums() { return &UV1_Nums; };
+		static uint32_t*		GetUV2_Nums() { return &UV2_Nums; };
+		static uint32_t*		GetUV3_Nums() { return &UV3_Nums; };
 		
 	private:
 		//		顶点属性 & 数据			拓扑属性 & 数据		材质属性 & 数据
@@ -67,9 +70,16 @@ namespace Engine::scene
 		std::vector<std::string>							ModelNames;
 		//std::vector<Object::Vertex_Attribute>				VerAtts;
 
+		/// <summary>
+		/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// </summary>
+		///					这些 num 用来计数 以及 赋值下标
 		static uint32_t										VertexCommonNums;
 		static uint32_t										IndexNums;
-		static uint32_t										UV_Nums;
+		static uint32_t										UV0_Nums;
+		static uint32_t										UV1_Nums;
+		static uint32_t										UV2_Nums;
+		static uint32_t										UV3_Nums;
 	};
 }
 
