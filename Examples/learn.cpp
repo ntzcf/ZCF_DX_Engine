@@ -28,6 +28,7 @@ using namespace DirectX;
 #include <wincodec.h>
  
 #include "thirdparty/d3dx12.h"
+#include <vector>
  
 #define GRS_WND_CLASS_NAME _T("Game Window Class")
 #define GRS_WND_TITLE	_T("DirectX12 Texture Sample")
@@ -840,7 +841,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR    l
 				//---------------------------------------------------------------------------------------------
 				//Draw Call！！！
 				pICommandList->DrawInstanced(_countof(stTriangleVertices), 1, 0, 0);
- 
+
+				///////////////////////////////////
+				/*std::vector<D3D12_VERTEX_BUFFER_VIEW>	VBVs;
+				pICommandList->IASetVertexBuffers(0, 5, VBVs.data());*/
+
 				//---------------------------------------------------------------------------------------------
 				//又一个资源屏障，用于确定渲染已经结束可以提交画面去显示了
 				pICommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pIARenderTargets[nFrameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));

@@ -1,6 +1,7 @@
 #include "Render/RenderResourceManager.h"
 #include "Render/SrcRenderHelper.h"
 
+
 namespace Engine::Render::resource
 {
 	void RenderResourceManager::Init(HWND window, int width, int height)
@@ -9,6 +10,10 @@ namespace Engine::Render::resource
 
 		m_device			=	DW.GetD3DDevice();
 		m_commandQueue		=	DW.GetCommandQueue();
+
+		
+		SRV_CBV_UAV_Descriptor_size = m_device.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		Sampler_Descriptor_size = m_device.Get()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
 		DW.Update();
 
@@ -150,6 +155,17 @@ namespace Engine::Render::resource
 			, IID_PPV_ARGS(&m_commandList)));
 
 		m_commandList->Close();
+	}
+	void RenderResourceManager::CreateBuffer()
+	{
+		ThrowIfFailed(m_device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), // 堆的类型：Default
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(byteSize), // 资源的大小
+			D3D12_RESOURCE_STATE_COMMON,  // 初始状态
+			nullptr,
+			IID_PPV_ARGS(defaultBuffer.GetAddressOf()))); // 创建的资源，通过引用参数方式传入. defualtBuffer类型为ComPtr<ID3DResource>
+
 	}
 	void RenderResourceManager::CreateVertexBuffer()
 	{

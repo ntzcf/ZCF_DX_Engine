@@ -41,7 +41,7 @@ namespace Engine::scene
 
 		Materials.push_back(std::move(CM));
 
-		Loader::Model model((ResourceFileDir + name), UV_Count . Mat_num++);
+		Loader::Model model(ResourceFileDir + name, UV_Count ,Mat_nums++);
 		//model.Materials.push_back(Mat_nums++);
 
 		//Models.push_back(std::move(model));

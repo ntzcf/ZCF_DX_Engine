@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Helper.h"
+#include "d3dUtil.h"
 
 namespace Engine::Render::resource::Buffer
 {

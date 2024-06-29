@@ -1,7 +1,8 @@
 #pragma once
 #include "RenderFrameGraph.h"
-#include "Helper.h"
+#include "d3dUtil.h"
 #include "RenderResourceManager.h"
+#include "RenderPass.h"
 
 namespace Engine::Render::renderer
 {
@@ -56,6 +57,8 @@ private:
 private:
 
 	std::shared_ptr<frameGraph::RenderFrameGraph>		RFGs[2];
+	
+	std::vector<renderpass::DepthPass>					DepthPasses;
 
 		// 常量缓冲区大小必须都是 256 字节的整数倍。
 		//static const UINT c_alignedConstantBufferSize = (sizeof(ModelViewProjectionConstantBuffer) + 255) & ~255;

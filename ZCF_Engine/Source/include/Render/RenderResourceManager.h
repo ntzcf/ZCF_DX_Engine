@@ -2,12 +2,15 @@
 
 #include "Device_Windows.h"
 #include "Scene/Scene.hpp"
-#include "Helper.h"
+#include "d3dUtil.h"
 #include "RenderPass.h"
 #include "Buffer.h"
 
 namespace Engine::Render::resource
 {
+	/// <summary>
+	/// //////////////////////////////////////////	C O M	智能指针 : 无需管理释放等问题
+	/// </summary>
 	class RenderResourceManager
 	{
 		struct FrameGraphicsPassResource;
@@ -24,7 +27,7 @@ namespace Engine::Render::resource
 		//	注册<name , Resource> <pass , Descriptors > 
 		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
 		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
-		void CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI);
+		void CreatePassResource(Engine::Render::renderpass::Pass_Mat_Info PMI);
 		void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
 
 		FrameGraphicsPassResource* GetFrameGraphicsResource(std::string name) {
@@ -47,7 +50,11 @@ namespace Engine::Render::resource
 		void CreateBuffer();
 		void CreateVertexBuffer();
 
-		void CreatePSO(renderpass::RenderPassInfo);
+		void Create_API_VI_Buffer();
+
+		
+
+		
 		void CreateRootSignature();
 
 
@@ -68,62 +75,80 @@ namespace Engine::Render::resource
 		D3D12_RESOURCE_BARRIER								m_endResBarrier;
 
 
+	private:
 
-
+		uint32_t	SRV_CBV_UAV_Descriptor_size	;
+		uint32_t	Sampler_Descriptor_size;
+		uint32_t GetDescriptorIndex(std::string name , Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
+		{	
+			return static_cast<uint32_t>
+			((API_GPU_handles[name].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / SRV_CBV_UAV_Descriptor_size);
+		}
+		uint32_t GetSamplerIndex(std::string name, Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
+		{
+			return static_cast<uint32_t>
+				((API_GPU_handles[name].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / Sampler_Descriptor_size);
+		}
 		 //							Frame	Graphics  Runtime
 		struct FrameGraphicsPassResource
 		{
-		public:
-			
-			Microsoft::WRL::ComPtr<ID3D12PipelineState>		PSO;
-			//        优化成直接给handle?  由RRM算好后再直接把handle给出,然后预留一段位置,等回收过后再移动回去.
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	RTV_Heap;
-			UINT64											RTV_StartIndex;
-			UINT64											RTV_DescriptorSize;
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	SRV_Heap;
-			Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	CBV_Heap;
-			D3D12_VERTEX_BUFFER_VIEW*						VBV;
-			D3D12_VERTEX_BUFFER_VIEW*						IBV;
-			D3D12_CPU_DESCRIPTOR_HANDLE*					DSV;
+			public:
+				//        优化成直接给handle?  由RRM算好后再直接把handle给出,然后预留一段位置,等回收过后再移动回去.
+				//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	RTV_Heap;
+				//UINT64											RTV_StartIndex;
+				//UINT64											RTV_DescriptorSize;
+
+				Microsoft::WRL::ComPtr<ID3D12PipelineState>		PSO;
+				Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	SRV_Heap;
+				Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	CBV_Heap;
+				std::vector<uint32_t>							Constants;
+				//		Constants	中关于Heap中下标的计算方式 :  (resource_handle - starthandle) / size;
+				//		需要个映射来找到这个pass所需的resource , 然后才能计算Index;
+				//		PassInfo.Input_SRV_Resource.names;	PassInfo.Input_CBV_Resource.names;
+				//		handle / pointer	 RRM::GetXXX(Rname)  { return un_map[name].handle; }		直接给handle还是先资源指针再获取handle?
+				//uint32_t Descriptor::GetDescriptorIndex(const DescriptorHandle& descriptorHandle) const
+			/*	{
+					return static_cast<uint32_t>   
+					(descriptorHandle.gpuDescriptorHandle.ptr -mDescriptorHandleFromStart.gpuDescriptorHandle.ptr) /mDescriptorSize);
+				}*/
+
+				std::unordered_map<std::string, Buffer::RenderTargetBuffer*>				RenderTargets;
+				D3D12_VERTEX_BUFFER_VIEW*						VBV;
+				D3D12_VERTEX_BUFFER_VIEW*						IBV;
+				D3D12_CPU_DESCRIPTOR_HANDLE*					DSV;
 
 
-			//	  如果放基类指针  使用时记得用	Dynamic_cast	转换一下
-			std::vector<Buffer::V_I_Buffer*>											V_I_Buffers;
-			//RTV
-			std::unordered_map<std::string, Buffer::RenderTargetBuffer*>				RenderTargets;
-			//SRV
-			
-			//CBV
-
+				//	  如果放基类指针  使用时记得用	Dynamic_cast	转换一下
 		};
+
+		//						<P_Mat_name , GR>
 		std::unordered_map<std::string, FrameGraphicsPassResource>								FrameGraphicsPassResources;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		//							Frame	Compute	Runtime
+		//					Frame	 Compute	Runtime
 		struct FrameComputePassResource
 		{
 
 		};
+		//						<P_Ferture_name , CR>
 		std::unordered_map<std::string, FrameComputePassResource>								FrameComputePassResources;
 
-		//							Frames  Resource
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//								Frames  Resource
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//									Cache	&	Debug
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>										Shaders;
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>				PSO_DESCs;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>			>					PSO_States;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>	>							PSO_States;
 			
-
-
-		//									ALL_My_Resource
-		std::vector<Buffer::V_I_Buffer>					V_I_Buffers;
-		std::vector<Buffer::ConstantBuffer>				ConstantBuffers;
-		//Constant  ------- Bindless
-		std::vector<Buffer::InstanceBuffer>				InstanceBuffers;
-		std::vector<Buffer::UAV_Buffer>					ComputeBuffers;
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//									ALL_API_Resource								
 		std::unordered_map<std::string, Microsoft::WRL::ComPtr< ID3D12Resource>	>								API_Resources;
+		std::unordered_map<std::string, Microsoft::WRL::ComPtr< CD3DX12_GPU_DESCRIPTOR_HANDLE>	>				API_GPU_handles;
 
 
 

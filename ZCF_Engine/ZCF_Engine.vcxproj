@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -27,15 +27,17 @@
     <ClInclude Include="Source\include\GameLogic\Game_Timer.h" />
     <ClInclude Include="Source\include\Headers.hpp" />
     <ClInclude Include="Source\include\Render\Buffer.h" />
+    <ClInclude Include="Source\include\Render\d3dUtil.h" />
     <ClInclude Include="Source\include\Render\d3dx12.h" />
+    <ClInclude Include="Source\include\Render\MathHelper.h" />
     <ClInclude Include="Source\include\Render\RenderFrameGraph.h" />
-    <ClInclude Include="Source\include\Render\Helper.h" />
     <ClInclude Include="Source\include\Render\Render.hpp" />
     <ClInclude Include="Source\include\Render\Renderer.h" />
     <ClInclude Include="Source\include\Render\Device_Windows.h" />
     <ClInclude Include="Source\include\Render\RenderPass.h" />
     <ClInclude Include="Source\include\Render\RenderResourceManager.h" />
     <ClInclude Include="Source\include\Render\SrcRenderHelper.h" />
+    <ClInclude Include="Source\include\Render\UploadBuffer.h" />
     <ClInclude Include="Source\include\Scene\Scene_Helper.h" />
     <ClInclude Include="Source\include\Scene\Lights.h" />
     <ClInclude Include="Source\include\Scene\Loader.h" />
@@ -51,9 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\Buffer.cpp" />
+    <ClCompile Include="Source\src\d3dUtil.cpp" />
     <ClCompile Include="Source\src\DX_Camera.cpp" />
     <ClCompile Include="Source\src\Game_Timer.cpp" />
     <ClCompile Include="Source\src\Loader.cpp" />
+    <ClCompile Include="Source\src\MathHelper.cpp" />
     <ClCompile Include="Source\src\RenderPass.cpp" />
     <ClCompile Include="Source\src\RenderResourceManager.cpp" />
     <ClCompile Include="Source\src\SceneManager.cpp" />

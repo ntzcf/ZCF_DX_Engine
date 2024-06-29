@@ -39,7 +39,7 @@ namespace Engine::scene
 	private:
 		//		顶点属性 & 数据			拓扑属性 & 数据		材质属性 & 数据
 		//std::vector<Loader::Assimp_Loader>											Assimp_Loaders;
-		std::vector<Loader::Model>													Models;
+		//std::vector<Loader::Model>													Models;
 		Loader::STB_Texture_loader													Tex_Loader;
 
 		//	可以话先统计下数量,	然后调用vector.resize(ALL nums);	减少转移损耗

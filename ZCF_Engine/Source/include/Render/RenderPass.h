@@ -1,14 +1,27 @@
 #pragma once
 
-#include "Helper.h"
+#include "d3dUtil.h"
 #include "Buffer.h"
 #include "Scene/SceneManager.h"
+#include "Scene/SceneObject.h"
 
 namespace Engine::Render::renderpass
 {
 	///////////////////////////////////////////////////////PSO
+	//		//									ALL_My_Buffer_Resource
+	//	//									Graphics
+	//std::vector<Buffer::V_I_Buffer>					V_I_Buffers;
+	//std::vector<Buffer::InstanceBuffer>				InstanceBuffers;
+	////								Texture	+	Constant  ------- Bindless
+	//std::vector<Buffer::ConstantBuffer>				ConstantBuffers;
+	//std::vector<Buffer::Texture>					Textures;
+	////									Compute
+	//std::vector<Buffer::UAV_Buffer>					ComputeBuffers;
+
+
 	struct  RootSignature
 	{
+
 
 	};
 	struct Shader
@@ -19,6 +32,12 @@ namespace Engine::Render::renderpass
 		//使用时候注意;用	string.c_str()	转换
 		uint16_t		ShaderFlags1;
 		uint16_t		ShaderFlags2;
+	};
+
+	struct PSO
+	{
+		Shader				shader;
+		RootSignature		RS;
 	};
 	/// <summary>
 	/// //////////////////////////////////////////////////////////////Resource
@@ -42,7 +61,7 @@ namespace Engine::Render::renderpass
 	{
 		std::string						name;
 		//  Poniter  如果资源已存在就有值, 否则置空等分配
-		std::optional<std::string>		Data;
+		std::string						Data;
 		ResourceInfoUsage				Usage;
 		//Write   Or   Read
 	};
@@ -50,11 +69,11 @@ namespace Engine::Render::renderpass
 	class resource::RenderResourceManager;
 
 
-	class RenderPassInfo
+	class Pass_Mat_Info
 	{
 	public:
-		RenderPassInfo() {};
-		~RenderPassInfo() {};
+		Pass_Mat_Info() {};
+		~Pass_Mat_Info() {};
 
 		//	Collect主要负责收集DESC的部分,填写?
 		virtual void PassCollectBegin();//设置各种信号,log等,便于调试
@@ -98,7 +117,7 @@ namespace Engine::Render::renderpass
 
 
 
-	class  LearnPassInfo:public RenderPassInfo
+	class  LearnPassInfo:public Pass_Mat_Info
 	{
 	public:
 
@@ -120,5 +139,47 @@ namespace Engine::Render::renderpass
 		bool																							isStreamOutPut;
 		std::vector<ResourceInfo>							InResourceInfos;
 		std::vector<ResourceInfo>							OutResourceInfos;
+	};
+
+
+	class DepthPass : public Pass_Mat_Info
+	{
+		DepthPass() {};
+		~DepthPass() {};
+
+	public:
+		std::string				Pname;
+		std::string				Mname;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
+			resource::RenderResourceManager,
+			Microsoft::WRL::ComPtr<ID3D12Device>)>														Lamda;
+		//	PSO
+		//	Resource
+		bool																							isStreamOutPut;
+		std::unordered_map<scene::Object::Vertex_Attribute, resource::Buffer::V_I_Buffer>			Vertex_Attribute_Stream;
+		std::unordered_map<scene::Object::Vertex_Attribute, resource::Buffer::V_I_Buffer>			Vertex_Attribute_Stream;
+	};
+
+	class MaterialPass : public Pass_Mat_Info
+	{
+	public:
+		MaterialPass() {};
+		~MaterialPass() {};
+	public:
+		std::string				Pname;
+		std::string				Mname;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
+			resource::RenderResourceManager,
+			Microsoft::WRL::ComPtr<ID3D12Device>)>							Lamda;
+
+		//			PSO
+		PSO						PSO;
+		//  Input		Data		&		Attribute   : 
+		std::unordered_map<scene::Object::Vertex_Attribute, resource::Buffer::Texture>			Texture;
+		//	Output		Buffer		Attribute:	Name , Type , Format , Size , ............
+		
+		//	Setting?
+		
+		//	Queue Type
 	};
 }

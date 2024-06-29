@@ -96,7 +96,7 @@ namespace Engine::Render::resource::Device_Windows
 		}
 	}
 
-	void DeviceWindows::CreatesRTVs()
+	void DeviceWindows::CreateRTVs()
 	{
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
 		for (UINT n = 0; n < m_frameCount; n++)

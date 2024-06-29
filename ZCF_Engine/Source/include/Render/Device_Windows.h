@@ -1,5 +1,5 @@
 #pragma once
-#include "Helper.h"
+#include "d3dUtil.h"
 
 
 namespace Engine::Render::resource::Device_Windows
@@ -52,7 +52,7 @@ namespace Engine::Render::resource::Device_Windows
 		void CreateDevice();
 		void CreateCommandQueue();// and Allocator
 		void Create_rtv_dsv_heaps();
-		void CreatesRTVs();
+		void CreateRTVs();
 		void CreatesDSVs();
 		void CreateFence();
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
