@@ -1,61 +1,89 @@
 #pragma once
 #include "d3dUtil.h"
 #include "Buffer.h"
-
+#include "RenderPass.h"
 
 /// <summary>
 /// /////////////////////////////////核心:	读	和	写	///////////////////////////////////////////////////////////////
 /// </summary>
 namespace Engine::Render::frameGraph
 {
+	struct RFGPassInfo;
 
-
-//						六维条件
-// 	   [Pass , Passes]	(PassInfo , ResourceInfo , QueueInfo)
+//						8维条件
+// 	   [Pass , Passes]	(PassInfo , ResourceInfo , QueueInfo , ResourceState(Barrier))
 // 
-
-//enum RFGResourceUsage
-//{
-//	Write,
-//	Read,
-//	/*VBV,
-//	IBV,
-//	CBV,
-//	UAV,
-//	SRV,
-//	DSV,
-//	RTV,
-//	SOV,
-//	Sampled,*/
-// 	Barrier
-// 	Fence
-//};
-struct RFGResourceInfo
-{
-	std::string			name;
-	//uint16_t			ID;
-	uint16_t			Lifes;
-	//		resource::Buffer::BaseBuffer* Resource;
-	//		还加入类型,大小,具体用途等因素
-	//		还可以从RFG Resource继承,特化资源,光放一个基类指针感觉不太稳啊
-};
-
-
-
 enum class RFGPassQueueType
 {
 	Graphics,
 	Compute,
+	//Copy,
+	//		Barrier , Fence
+	//									建3种逻辑队列来放命令
 };
 
+enum class RFGPassType
+{
+	Depth,
+	Gbuffer,
+	Lighting,
+	Shdow,
+	Material,
+	Post,
+
+	Debug,
+};
+
+enum class RFGPTaskQueueType
+{
+	Graphics,
+	Compute,
+	Copy,
+	//		Barrier , Fence
+	//									建3种逻辑队列来放命令
+};
+
+
+
+
+
+struct RFGResourceInfo
+{
+	//RFGResourceInfo(resource::Buffer::ResourceInfo RI) :ResourceInfo(RI) {};
+
+	friend class RenderFrameGraph;
+	friend class VitualResourceManager;
+
+	//std::string			name;
+	//resource::Buffer::ResourceInfo		ResourceInfo;
+	//uint32_t			ID;
+private:
+	uint32_t			Lifes;
+	//std::vector<std::string>			Read;
+	/*std::vector<std::string>			Write;*/
+	std::vector<uint32_t>			Read;
+	std::vector<uint32_t>			Write;
+	
+};
+
+//				特化出 Graphics 与 Compute 分别的PassInfo & Resource Info?	然后套娃式继续细分?
 struct RFGPassInfo
 {
 	std::string							name;
-	RFGPassQueueType						QueueType;
-	std::vector<RFGResourceInfo>		Reads;
-	std::vector<RFGResourceInfo>		Writes;
+	renderpass::Pass_Mat_Info*			PassDataInfo;
+
+	RFGPassQueueType					QueueType;
+	RFGPassType							PassType;
+	std::vector<std::string>			In;
+	std::vector<std::string>			Out;
+
 };
-	
+
+struct RFGTaskInfo
+{
+	RFGPTaskQueueType  QueueType;
+};
+
 
 class RenderFrameGraph
 {
@@ -63,13 +91,138 @@ public:
 	RenderFrameGraph() {};
 	~RenderFrameGraph() {};
 
-	void Add_Pass(RFGPassInfo PI)					{	RFG_PassInfos.emplace	    (PI.name , PI)	;	};
-	void Add_Read_Resource(RFGResourceInfo R)		{	RFG_Read_Resources .emplace	( R.name , R )	;	};
-	void Add_Write_Resource(RFGResourceInfo R)		{	RFG_Write_Resources.emplace	( R.name , R )	;	};
+	
+	//	还是手动加吧,这样就可以加一层 if 逻辑层
+	void Add_Pass(RFGPassInfo PI) 
+	{ 
+		RFG_PassInfos.push_back(PI);	
+		//PassInfoNum++;
+		//RFG_PassInfoID.emplace(PI.name, PassInfoNum++);
+	}
+	void Add_Resource(std::string name )
+	{
+		//	不允许重复加入键值,且不会覆盖
+		//	但是这样的话每个资源的Buffer::resourceInfo只有一份
+		//	也就是具体状态得保存在PassInfo中
+		//	或者保存个Resource的<Pass , State>集合
+		RFG_ResourceInfoID.emplace(name, ResourceInfoNum++);
+		RFG_ResourceInfos.push_back(RFGResourceInfo());
+	}
+	void Add_Global_Resource(std::string name)
+	{
+
+	};
+	//void Add_Read_Resource(RFGResourceInfo R)		
+	//{	
+	//	RFG_Read_Resources .push_back( R )	;	
+	//	//RFG_ResourceInfoID.emplace(R.name,ResourceNum++);	
+	//};
+	//void Add_Write_Resource(RFGResourceInfo R) 
+	//{ 
+	//	RFG_Write_Resources.push_back(R);	
+	//	//RFG_ResourceInfoID.emplace(R.name, ResourceNum++);
+	//};
+
+	//
+	void setup();
+	//	连接依赖,添加屏障
+	void compiler();
+	//	生成Task
+	void excute();
+
+	
 
 private:
-	std::unordered_map<std::string, RFGPassInfo>			RFG_PassInfos;
-	std::unordered_map<std::string, RFGResourceInfo>		RFG_Read_Resources;
-	std::unordered_map<std::string, RFGResourceInfo>	    RFG_Write_Resources;
+	std::unordered_map<std::string, uint32_t>			RFG_Graphics_Pass_InfoID;
+	std::unordered_map<std::string, uint32_t>			RFG_Compute_Pass_InfoID;
+	std::unordered_map<std::string, uint32_t>			RFG_ResourceInfoID;
+	//std::unordered_map<std::string, uint32_t>			RFG_Read_ResourceID;
+	//std::unordered_map<std::string, uint32_t>			RFG_Write_ResourcID;
+
+	uint32_t				PassInfoNum=0;
+	uint32_t				ResourceInfoNum=0;
+	//uint32_t				ResourceNum;		读写分别从0开始的ID , 还是共用一套?
+
+	std::vector	<RFGPassInfo>								RFG_PassInfos;
+	std::vector	<RFGResourceInfo>							RFG_ResourceInfos;
+	//std::vector	<RFGPassInfo>							RFG_Graphics_PassInfos;
+	//std::vector	<RFGPassInfo>							RFG_Compute_PassInfos;
+	//std::vector	<RFGResourceInfo>						RFG_Read_Resources;
+	//std::vector	<RFGResourceInfo>						RFG_Write_Resources;
+	//std::unordered_map<std::string, RFGResourceInfo>		RFG_ResourceInfos;
+	//std::unordered_map<std::string, RFGResourceInfo>		RFG_Read_Resources;
+	//std::unordered_map<std::string, RFGResourceInfo>	    RFG_Write_Resources;
+
+	VirtualResourceManager								VRM;
 };
+
+
+class VirtualResourceManager
+{
+	//			Node	的Resource 连接的必是Pass  ,然后让所有Pass属于VNode
+	//			VNode	的Resource 连接的也是Pass  ,同理
+	enum class NodeType
+	{
+		Resource,
+
+		Pass,
+
+		Barrier,
+		Fence
+	};
+
+	struct NodeIndex
+	{
+	public:
+		NodeIndex() {};
+		NodeIndex(bool a, uint32_t b) :IsVNode(a), Index(b) {};
+		bool IsVNode;
+		uint32_t Index;
+	};
+
+
+	struct Node
+	{
+	public:
+		
+		NodeType	Type;
+
+		uint32_t	Read;
+		uint32_t	Write;
+
+		bool        IsUsed=1;
+	};
+
+
+	struct VNode
+	{
+	public:
+		NodeType				Type;
+
+		std::vector<NodeIndex>	Reads;
+		std::vector<NodeIndex>	Writes;
+	};
+
+
+public:
+
+	std::vector<Node>		Nodes;
+	std::vector<VNode>		VNodes;
+
+	std::unordered_map<std::string, NodeIndex>	Name_Index;
+
+	uint32_t				NodeNum=0;
+	uint32_t				VNodeNum = 0;
+
+	void		Add_Node(RFGPassInfo& PassInfo);
+
+public:
+	VirtualResourceManager() {};
+	~VirtualResourceManager() {};
+
+	 
+};
+
+
+
 }

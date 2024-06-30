@@ -175,6 +175,9 @@
     <ClCompile Include="Source\src\MathHelper.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Source\src\RenderFrameGraph.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\shader1.hlsl">

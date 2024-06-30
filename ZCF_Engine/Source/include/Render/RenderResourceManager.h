@@ -105,13 +105,16 @@ namespace Engine::Render::resource
 		Microsoft::WRL::ComPtr<ID3D12Device>				m_device;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue>			m_commandQueue;
 		//Device Update
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>		m_commandAllocator;
 		uint32_t											m_frameIndex;
 		Microsoft::WRL::ComPtr<ID3D12Resource>				m_renderTarget;
-
 		Microsoft::WRL::ComPtr<ID3D12Fence>					m_fence;
 		UINT64												m_fenceValues[2];
 		HANDLE												m_fenceEvent;
+		//		一个帧一个Command Queue
+		//		一个线程一个Allocator
+		//		一个cmdlist就可以通过不同接口调用 , 然后自行发送给对应的Graphic,Compute,Copy引擎
+		//		同步:	帧	大Pass	小Pass	命令队列(三种引擎之间)
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>		m_commandAllocator;
 		D3D12_RESOURCE_BARRIER								m_beginResBarrier;
 		D3D12_RESOURCE_BARRIER								m_endResBarrier;
 

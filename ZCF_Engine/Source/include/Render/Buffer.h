@@ -71,6 +71,9 @@ namespace Engine::Render::resource::Buffer
 		uint32_t								Height;
 
 		bool									Frames;
+		//		如何针对不同种类: Texture , RootConstant , ConstantBuffer , Sampler?
+		//		让Renderer去统计然后全部上传.
+		//		最终靠名字去索引就完了.
 	};
 
 

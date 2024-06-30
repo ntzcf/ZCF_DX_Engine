@@ -59,8 +59,11 @@ namespace Engine::Render::renderer
 			cmdlist->SetGraphicsRoot32BitConstants(0u, 3u, reinterpret_cast<void*>(Resource.Constants.data()), 0u);
 
 			cmdlist->OMSetRenderTargets(Resource.RTVs.size(), Resource.RTVs.data(), 1, Resource.DSV);
+			//			参数不够的部分就手动填了 , 总不能真全自动吧
 			cmdlist->RSSetViewports();
 			cmdlist->RSSetScissorRects();
+
+			cmdlist->DrawIndexedInstanced(3)
 		};
 	}
 	//	void Renderer::LearnPass()
