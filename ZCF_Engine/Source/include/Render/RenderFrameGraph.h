@@ -3,6 +3,8 @@
 #include "Buffer.h"
 #include "RenderPass.h"
 
+#include <bitset>
+
 /// <summary>
 /// /////////////////////////////////核心:	读	和	写	///////////////////////////////////////////////////////////////
 /// </summary>
@@ -153,7 +155,8 @@ private:
 	//std::unordered_map<std::string, RFGResourceInfo>		RFG_Read_Resources;
 	//std::unordered_map<std::string, RFGResourceInfo>	    RFG_Write_Resources;
 
-	VirtualResourceManager								VRM;
+	//		考虑来个Node ID 映射到	Name的?
+	VirtualResourceManager									VRM;
 };
 
 
@@ -187,10 +190,11 @@ class VirtualResourceManager
 		
 		NodeType	Type;
 
-		uint32_t	Read;
-		uint32_t	Write;
+		uint32_t	Read=-1;
+		uint32_t	Write=-1;
 
 		bool        IsUsed=1;
+		uint32_t	VNode_Index;
 	};
 
 
@@ -213,6 +217,11 @@ public:
 
 	uint32_t				NodeNum=0;
 	uint32_t				VNodeNum = 0;
+
+	//			1就是没有资源没有写直接读 , 他相连的Pass就是开始
+	//			0就是有读有写  ,  肯定是中间步骤了
+	std::bitset<1024>		Node_Heads;
+	std::bitset<1024>		VNode_Heads;
 
 	void		Add_Node(RFGPassInfo& PassInfo);
 

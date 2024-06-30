@@ -93,7 +93,8 @@ namespace Engine::Render::frameGraph
 
 			for (auto R : PassInfo.In)
 			{
-				if(Name_Index.find(R)==Name_Index.end())
+				auto find = Name_Index.find(R);
+				if(find==Name_Index.end())
 				{
 					PNode->Reads.emplace_back(0,NodeNum);
 
@@ -103,25 +104,34 @@ namespace Engine::Render::frameGraph
 					Rnode.Write = -1;
 					Nodes.push_back(std::move(Rnode));
 
+					Node_Heads.set(NodeNum);
+
 					Name_Index.emplace(R, NodeNum++);
+				}
+				if(find!=Name_Index.end() && Nodes[find->second.Index].Read==-1)
+				{
+					PNode->Reads.emplace_back(0, find->second.Index);
+					Nodes[find->second.Index].Read = PassIndex;
 				}
 
 				else
 				{	
 						bool isV = Name_Index[R].IsVNode;
-						uint32_t index = Name_Index[R].Index;
+						
 
 						if(isV)
 						{
-							PNode->Reads.emplace_back(1, index);
+							uint32_t Vindex = Name_Index[R].Index;
 
-							VNodes[index].Reads.emplace_back(1,PassIndex);
+							PNode->Reads.emplace_back(1, Vindex);
+
+							VNodes[Vindex].Reads.emplace_back(1,PassIndex);
 
 						}
 
 						if(!isV)
 						{
-							
+							uint32_t index = Name_Index[R].Index;
 
 							Nodes[index].IsUsed = 0;
 
@@ -132,6 +142,8 @@ namespace Engine::Render::frameGraph
 								VNodes[read].Reads.emplace_back(1, VNodeNum);
 							if (write > 0)
 								VNodes[write].Writes.emplace_back(1, VNodeNum);
+							if(write==-1)
+								VNode_Heads.set(VNodeNum);
 
 							VNode Res;
 							Res.Type = NodeType::Resource;
@@ -151,7 +163,8 @@ namespace Engine::Render::frameGraph
 			}
 			for (auto R : PassInfo.Out)
 			{
-				if (Name_Index.find(R) == Name_Index.end())
+				auto find = Name_Index.find(R);
+				if (find==Name_Index.end())
 				{
 					PNode->Writes.emplace_back(0,NodeNum);
 
@@ -163,21 +176,35 @@ namespace Engine::Render::frameGraph
 
 					Name_Index.emplace(R, NodeNum++);
 				}
+				if (find != Name_Index.end() && Nodes[find->second.Index].Write == -1)
+				{
+					PNode->Writes.emplace_back(0, find->second.Index);
+					Nodes[find->second.Index].Write = PassIndex;
+
+					Node_Heads.reset(find->second.Index);
+				}
 				else
 				{
 					bool isV = Name_Index[R].IsVNode;
-					uint32_t index = Name_Index[R].Index;
+					
 
 					if (isV)
-					{
-						PNode->Writes.emplace_back(1, index);
+					{	
+						uint32_t Vindex = Name_Index[R].Index;
 
-						VNodes[index].Writes.emplace_back(1, PassIndex);
+						PNode->Writes.emplace_back(1, Vindex);
+
+						VNodes[Vindex].Writes.emplace_back(1, PassIndex);
+						
+						VNode_Heads.reset(Vindex);
+						
 
 					}
 
 					if (!isV)
 					{
+
+						uint32_t index = Name_Index[R].Index;
 
 						Nodes[index].IsUsed = 0;
 
