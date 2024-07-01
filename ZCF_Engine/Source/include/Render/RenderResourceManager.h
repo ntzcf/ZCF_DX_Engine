@@ -68,8 +68,6 @@ namespace Engine::Render::resource
 		//	注册<name , Resource> <pass , Descriptors > 
 		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
 		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
-		void CreatePassResource(Engine::Render::renderpass::Pass_Mat_Info PMI);
-		//void CreateLearnPassResource(Engine::Render::renderpass::LearnPassInfo LPI);
 
 		FrameGraphicsPassResource* GetFrameGraphicsResource(std::string name) {
 			return &FrameGraphicsPassResources[name];
@@ -115,8 +113,8 @@ namespace Engine::Render::resource
 		//		一个cmdlist就可以通过不同接口调用 , 然后自行发送给对应的Graphic,Compute,Copy引擎
 		//		同步:	帧	大Pass	小Pass	命令队列(三种引擎之间)
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>		m_commandAllocator;
-		D3D12_RESOURCE_BARRIER								m_beginResBarrier;
-		D3D12_RESOURCE_BARRIER								m_endResBarrier;
+		//D3D12_RESOURCE_BARRIER								m_beginResBarrier;
+		//D3D12_RESOURCE_BARRIER								m_endResBarrier;
 
 
 	private:

@@ -41,9 +41,9 @@ namespace Engine::scene::S_Texture
 
 
 		std::string		name;
-		int		x;
-		int		y;
-		int		size;
+		int	        	x;
+		int	        	y;
+		int	        	size;
 		//Data
 		unsigned char*	Texture_Data;
 	private:

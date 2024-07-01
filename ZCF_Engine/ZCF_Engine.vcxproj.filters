@@ -131,6 +131,9 @@
     <ClInclude Include="Source\include\Render\UploadBuffer.h">
       <Filter>include\Render\Helper</Filter>
     </ClInclude>
+    <ClInclude Include="Source\include\Render\RenderStatePipeline.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\ZCF_engine.cpp">

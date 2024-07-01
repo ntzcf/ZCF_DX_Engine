@@ -3,6 +3,7 @@
 #include "d3dUtil.h"
 #include "Scene/SceneManager.h"
 #include "Buffer.h"
+#include "RenderStatePipeline.h"
 
 namespace Engine::Render::renderpass
 {
@@ -21,27 +22,6 @@ namespace Engine::Render::renderpass
 	////									Compute
 	//std::vector<Buffer::UAV_Buffer>					ComputeBuffers;
 
-
-	struct  RootSignature
-	{
-
-
-	};
-	struct Shader
-	{
-		std::string		ShaderPath;
-		std::string		ShaderVersion;
-		std::string		ShaderMain;
-		//使用时候注意;用	string.c_str()	转换
-		uint16_t		ShaderFlags1;
-		uint16_t		ShaderFlags2;
-	};
-
-	struct PSO
-	{
-		Shader				shader;
-		RootSignature		RS;
-	};
 	/// <summary>
 	/// //////////////////////////////////////////////////////////////Resource
 	/// </summary>
@@ -125,7 +105,7 @@ namespace Engine::Render::renderpass
 		//		Queue
 		bool					isGraphics;
 		//		PSO
-		PSO						PSO;
+		//PSO						PSO;
 		//		Resource
 		//			VBV			IBV			Position Stream			Index Stream
 		//								或者直接变成Instance Stream?
@@ -195,7 +175,7 @@ namespace Engine::Render::renderpass
 		//	Setting?
 		
 		//			PSO
-		PSO						PSO;
+		//PSO						PSO;
 		//  Input		Data		&		Attribute   : 
 		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
 		//	Output		Buffer		Attribute:	Name , Type , Format , Size , ............

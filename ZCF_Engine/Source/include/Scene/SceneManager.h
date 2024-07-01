@@ -47,6 +47,7 @@ namespace Engine::scene
 
 		//	可以话先统计下数量,	然后调用vector.resize(ALL nums);	减少转移损耗
 
+		//	直接序列化流也行
 		static std::vector<Object::Assimp_Object>											Objects;
 		static std::unordered_map<Object::Vertex_Attribute , std::vector<float>>			Vertex_Attribute_Stream;
 		static std::vector<uint32_t>														Index_Stream;

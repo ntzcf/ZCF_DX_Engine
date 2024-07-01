@@ -15,6 +15,40 @@ namespace Engine::scene::Materials
 
 	//};
 
+	struct Material_Shader
+	{
+		//ShaderType		ShaderType;
+		std::string		ShaderPath;
+		std::string		ShaderName;
+		std::string		ShaderVersion;
+		//std::string		ShaderMain;
+		//使用时候注意;用	string.c_str()	转换
+		//uint16_t		ShaderFlags1;
+		//uint16_t		ShaderFlags2;
+	};
+	enum RootParameterType
+	{
+		ConstantBuffer,
+		TextureSRV,
+		TextureSampler,
+		RootParameterCount,
+
+		UAV,
+	};
+
+	
+
+	struct MaterialPSO
+	{
+		std::vector<Material_Shader>		Shaders;
+		std::vector<RootParameterType>		RootParameters;
+
+		bool								IsOpacity;
+	};
+
+
+
+
 	enum  class S_Texture_Attribute
 	{
 		BaseColor,
@@ -50,11 +84,13 @@ namespace Engine::scene::Materials
 		CommonMaterial() {};
 		~CommonMaterial() {};
 
-
+		
 		std::string													name;
+
+		MaterialPSO													MP;
+		//std::vector<RootParameterType>								RootParameters;
 		std::unordered_map < S_Texture_Attribute ,	uint32_t>		Textures;
 		std::unordered_map < std::string		 ,	uint32_t>		Constants;
-		//PSO	: RootSignature , Shader , Sample , BlendeMode............
 	private:
 
 		

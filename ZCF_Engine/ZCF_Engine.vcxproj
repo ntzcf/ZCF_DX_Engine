@@ -36,6 +36,7 @@
     <ClInclude Include="Source\include\Render\Device_Windows.h" />
     <ClInclude Include="Source\include\Render\RenderPass.h" />
     <ClInclude Include="Source\include\Render\RenderResourceManager.h" />
+    <ClInclude Include="Source\include\Render\RenderStatePipeline.h" />
     <ClInclude Include="Source\include\Render\SrcRenderHelper.h" />
     <ClInclude Include="Source\include\Render\UploadBuffer.h" />
     <ClInclude Include="Source\include\Scene\Scene_Helper.h" />
