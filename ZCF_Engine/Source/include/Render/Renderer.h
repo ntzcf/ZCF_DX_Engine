@@ -3,7 +3,7 @@
 #include "d3dUtil.h"
 #include "RenderPass.h"
 #include "Scene/SceneManager.h"
-
+#include "RenderStatePipeline.h"
 class RenderResourceManager;
 
 namespace Engine::Render::renderer
@@ -11,10 +11,10 @@ namespace Engine::Render::renderer
 class Renderer
 {
 public:
-	Renderer() {};
+	Renderer() { };
 	~Renderer() {};
 
-	void Init();
+	void Init(  scene::SceneManager * SM);
 	void Update();
 	void run();
 
@@ -57,8 +57,9 @@ private:
 
 
 private:
+	scene::SceneManager*									SceneManager;
 
-	std::shared_ptr<frameGraph::RenderFrameGraph>		RFGs[2];
+	//std::unique_ptr<frameGraph::RenderFrameGraph>			RFG;
 	
 	std::vector<renderpass::DepthPassInfo>					DepthPasses;
 	std::vector<renderpass::GBufferPassInfo>				GBufferPasses;

@@ -49,17 +49,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    l
 		return 0;
 	}
 
-	//			Engine
-	ZCF_Engine engine;
-	//			Init
-	engine.Init(hWnd, iWidth, iHeight);
 
-	while (GetMessage(&msg, NULL, 0, 0) > 0) 
+	try
 	{
-		engine.run();
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		ZCF_Engine engine(hWnd,iWidth,iHeight);
+		if (!engine.Init())
+			return 0;
 
+		return engine.run();
+	}
+	catch (DxException& e)
+	{
+		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+		return 0;
 	}
 }
 

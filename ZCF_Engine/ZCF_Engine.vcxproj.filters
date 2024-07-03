@@ -80,9 +80,6 @@
     <ClInclude Include="Source\include\Render\RenderResourceManager.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Common\Camera.h">
-      <Filter>include\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Render\RenderPass.h">
       <Filter>include\Render</Filter>
     </ClInclude>

@@ -7,6 +7,7 @@
 
 namespace Engine::Render::renderpass
 {
+	using namespace Engine::Render::resource;
 	class resource::RenderResourceManager;
 	class resource::FrameGraphicsPassResource;
 	class resource::FrameComputePassResource;
@@ -32,6 +33,7 @@ namespace Engine::Render::renderpass
 	/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// </summary>
 
+	class resource::FrameGraphicsPassResource;
 	class Pass_Mat_Info
 	{
 	public:
@@ -101,7 +103,9 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>, resource::FrameGraphicsPassResource)>				Lamda;
+		RenderPSO				RenderPSO;
+
+		std::function<void(ID3D12GraphicsCommandList&, const resource::FrameGraphicsPassResource&)>				Lamda;
 		//		Queue
 		bool					isGraphics;
 		//		PSO
@@ -109,8 +113,8 @@ namespace Engine::Render::renderpass
 		//		Resource
 		//			VBV			IBV			Position Stream			Index Stream
 		//								或者直接变成Instance Stream?
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>				Vertex_Attribute_Stream;
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				IndexBuffer;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>		Vertex_Attribute_Stream;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				Index_Stream;
 		
 	};
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

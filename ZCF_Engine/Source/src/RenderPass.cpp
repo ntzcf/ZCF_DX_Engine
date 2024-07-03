@@ -5,9 +5,5 @@
 namespace Engine::Render::renderpass
 {
 
-	void LearnPassInfo::PassCollect()
-	{
-
-	}
 
 }

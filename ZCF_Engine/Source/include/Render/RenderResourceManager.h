@@ -78,18 +78,28 @@ namespace Engine::Render::resource
 			return &FrameComputePassResources[name];
 		}
 
+		void AddPass();
+
 	private:
 
+		void UploadData();
+		void UploadBuffers();
+		void UploadTextures();
+
+		
+
+		void CreateGraphicsPipeline();
+
 		//同步资源
-		void CreateFenceAndEvent();
-		void CreateBarrier();
+		//void CreateFenceAndEvent();
+		//void CreateBarrier();
 
 		//V,I,C,Instance,T,U
 		//是统一封装成Buffer函数组, 还是写分支但是复用一个函数?
-		void CreateBuffer();
-		void CreateVertexBuffer();
+		//void CreateBuffer();
+		//void CreateVertexBuffer();
 
-		void Create_API_VI_Buffer();
+		//void Create_API_VI_Buffer();
 
 		
 
@@ -121,6 +131,7 @@ namespace Engine::Render::resource
 
 		uint32_t	SRV_CBV_UAV_Descriptor_size	;
 		uint32_t	Sampler_Descriptor_size;
+		//				待重构
 		uint32_t GetDescriptorIndex(std::string name , Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
 		{	
 			return static_cast<uint32_t>
@@ -188,10 +199,19 @@ namespace Engine::Render::resource
 			
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//									ALL_API_Resource								
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr< ID3D12Resource>	>								API_Resources;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr< CD3DX12_GPU_DESCRIPTOR_HANDLE>	>				API_GPU_handles;
-
+		//									ALL_API_Resource
+	std::vector<ID3D12DescriptorHeap>						CPU_DescriptorHeaps;
+	std::vector<ID3D12DescriptorHeap>						GPU_DescriptorHeaps;
+	//			GPU堆要双缓冲ring吗?
+	
+	//			资源名 --------- Descriptor View ID : 可复用
+	std::unordered_map<std::string, uint32_t>				ResourceIDs;
+	
+	//			资源上传后就不用了,之后都是用的View
+	std::unordered_map<std::string , Microsoft::WRL::ComPtr< ID3D12Resource>>					API_Resources;
+	//			name---id---handle : 可以实现描述符复用 , 只要最终复制到GPU堆里是一起的就行 , CPU堆随便散放.只要找得到
+	std::unordered_map<uint32_t, Microsoft::WRL::ComPtr< D3D12_CPU_DESCRIPTOR_HANDLE>>			API_CPU_handles;
+	std::vector<Microsoft::WRL::ComPtr< D3D12_GPU_DESCRIPTOR_HANDLE>>							API_GPU_handles;
 
 
 

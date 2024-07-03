@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\include\Common\Camera.h" />
     <ClInclude Include="Source\include\Common\Common.hpp" />
     <ClInclude Include="Source\include\Common\Vertex\Vertex.h" />
     <ClInclude Include="Source\include\GameLogic\DX_Camera.h" />

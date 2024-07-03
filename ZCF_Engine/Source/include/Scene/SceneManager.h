@@ -28,16 +28,16 @@ namespace Engine::scene
 		void LoadObjects(std::string name , uint32_t UV_Count);
 		void LoadTextures(std::string name);
 
-		static std::unordered_map<Object::Vertex_Attribute, std::vector<float>>* GetVAS() {return &Vertex_Attribute_Stream; }
-		static std::vector<uint32_t>*				GetIS()		{ return &Index_Stream; };
-		static std::vector<Object::Assimp_Object>* GetObjecs()	{ return &Objects; };
+		const std::unordered_map<Object::Vertex_Attribute, std::vector<float>>* GetVAS() {return &Vertex_Attribute_Stream; }
+		const std::vector<uint32_t>*				GetIS()		{ return &Index_Stream; };
+		const std::vector<Object::Assimp_Object>* GetObjecs()	{ return &Objects; };
 
-		static uint32_t*		GetVertexCommonNums() { return &VertexCommonNums; };
-		static uint32_t*		GetIndexNums() { return &IndexNums; };
-		static uint32_t*		GetUV0_Nums() { return &UV0_Nums; };
-		static uint32_t*		GetUV1_Nums() { return &UV1_Nums; };
-		static uint32_t*		GetUV2_Nums() { return &UV2_Nums; };
-		static uint32_t*		GetUV3_Nums() { return &UV3_Nums; };
+		const uint32_t*		GetVertexCommonNums() { return &VertexCommonNums; };
+		const uint32_t*		GetIndexNums() { return &IndexNums; };
+		const uint32_t*		GetUV0_Nums() { return &UV0_Nums; };
+		const uint32_t*		GetUV1_Nums() { return &UV1_Nums; };
+		const uint32_t*		GetUV2_Nums() { return &UV2_Nums; };
+		const uint32_t*		GetUV3_Nums() { return &UV3_Nums; };
 		
 	private:
 		//		顶点属性 & 数据			拓扑属性 & 数据		材质属性 & 数据
@@ -48,9 +48,9 @@ namespace Engine::scene
 		//	可以话先统计下数量,	然后调用vector.resize(ALL nums);	减少转移损耗
 
 		//	直接序列化流也行
-		static std::vector<Object::Assimp_Object>											Objects;
-		static std::unordered_map<Object::Vertex_Attribute , std::vector<float>>			Vertex_Attribute_Stream;
-		static std::vector<uint32_t>														Index_Stream;
+		 std::vector<Object::Assimp_Object>											Objects;
+		 std::unordered_map<Object::Vertex_Attribute , std::vector<float>>			Vertex_Attribute_Stream;
+		 std::vector<uint32_t>														Index_Stream;
 
 		std::vector<Materials::CommonMaterial>									Materials;
 		std::vector<S_Texture::STB_Texture>										Textures;
@@ -75,12 +75,12 @@ namespace Engine::scene
 		/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// </summary>
 		///					这些 num 用来计数 以及 赋值下标
-		static uint32_t										VertexCommonNums;
-		static uint32_t										IndexNums;
-		static uint32_t										UV0_Nums;
-		static uint32_t										UV1_Nums;
-		static uint32_t										UV2_Nums;
-		static uint32_t										UV3_Nums;
+		uint32_t										VertexCommonNums;
+		uint32_t										IndexNums;
+		uint32_t										UV0_Nums;
+		uint32_t										UV1_Nums;
+		uint32_t										UV2_Nums;
+		uint32_t										UV3_Nums;
 	};
 }
 

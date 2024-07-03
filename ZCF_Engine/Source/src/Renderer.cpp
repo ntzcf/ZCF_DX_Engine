@@ -11,11 +11,13 @@ using namespace renderpass;
 
 namespace Engine::Render::renderer
 {
-	void Renderer::Init()
+	void Renderer::Init(  scene::SceneManager	*SM)
 	{
+		SceneManager = SM;
 	}
 	void Renderer::Update()
 	{
+		//RFG = std::make_unique<RenderFrameGraph>(new RenderFrameGraph);
 	}
 	void Renderer::run()
 	{
@@ -26,6 +28,7 @@ namespace Engine::Render::renderer
 	void Renderer::Render()
 	{
 		//LearnPass();
+		DepthPass();
 	}
 	void Renderer::RenderBegin()
 	{
@@ -34,6 +37,9 @@ namespace Engine::Render::renderer
 	}
 	void Renderer::RenderEnd()
 	{
+		//RFG->setup();
+		//RFG->compiler();
+		//RFG->excute();
 		//Fence:等本帧执行图
 		// 回收线程与图
 		//编译:本帧的收集图开始编译;
@@ -43,30 +49,34 @@ namespace Engine::Render::renderer
 	void Renderer::DepthPass()
 	{
 		DepthPassInfo DPI;
-		auto PositionStream = scene::SceneManager::GetVAS()->at(scene::Object::Vertex_Attribute::Position);
-		DPI.Vertex_Attribute_Stream.emplace(std::move(PositionStream));
+
+		DPI.Vertex_Attribute_Stream.emplace
+		(SceneManager->GetVAS()->at(scene::Object::Vertex_Attribute::Position));
+		DPI.Index_Stream.emplace(SceneManager->GetIS()->data());
+
 		DPI.isGraphics = 1;
 		DPI.PassName = "DepthPass";
-		//DPI.PSO
-		DPI.Lamda = [&](Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> cmdlist, resource::FrameGraphicsPassResource Resource)->void
+		//DPI.RenderPSO.Shader		这也封装成一个材质吗?
+		DPI.RenderPSO.InputView.emplace_back("position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 0, 0);
+		DPI.Lamda=[](ID3D12GraphicsCommandList &cmdlist , const resource:: FrameGraphicsPassResource &Resource)
 		{
-			cmdlist->SetPipelineState(Resource.PSO.Get());
+			cmdlist.SetPipelineState(Resource.PSO.Get());
 
-			cmdlist.Get()->IASetVertexBuffers(0,Resource.VBV.size(), Resource.VBV.data());
-			cmdlist->IASetIndexBuffer(Resource.IBV);
+			cmdlist.IASetVertexBuffers(0,Resource.VBV.size(), Resource.VBV.data());
+			cmdlist.IASetIndexBuffer(Resource.IBV);
 
 			//cmdlist.Get()->SetDescriptorHeaps(0,Resource.Heaps.data());
 			//cmdlist->SetGraphicsRoot32BitConstants(0u, 3u, reinterpret_cast<void*>(Resource.Constants.data()), 0u);
 
 			//cmdlist->OMSetRenderTargets(Resource.RTVs.size(), Resource.RTVs.data(), 1, Resource.DSV);
 			//			参数不够的部分就手动填了 , 总不能真全自动吧
-			cmdlist->RSSetViewports();
-			cmdlist->RSSetScissorRects();
+			cmdlist.RSSetViewports();
+			cmdlist.RSSetScissorRects();
 
-			cmdlist->DrawIndexedInstanced();
-
-
+			cmdlist.DrawIndexedInstanced();
 		};
+		//RFG->Add_Pass();
+		//RFG->Add_Resource();
 
 		
 	}

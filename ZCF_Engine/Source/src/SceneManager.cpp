@@ -8,7 +8,7 @@ namespace Engine::scene
 {
 	void SceneManager::Init()
 	{
-		LoadObjects();
+		//LoadObjects();
 
 	}
 

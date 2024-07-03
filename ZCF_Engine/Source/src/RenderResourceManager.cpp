@@ -258,11 +258,18 @@ namespace Engine::Render::resource
 	{
 		/*m_commandList->Close();*/
 		////命令分配器先Reset一下
-		//ThrowIfFailed(m_commandAllocator->Reset());
-		//m_commandList->Close();
-		////Reset命令列表，并重新指定命令分配器和PSO对象
-		//ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), m_pipelineState.Get()));
+		ThrowIfFailed(m_commandAllocator->Reset());
+		m_commandList->Close();
+		//Reset命令列表，并重新指定命令分配器和PSO对象
+		ThrowIfFailed(m_commandList->Reset(m_commandAllocator.Get(), NULL));
 
+		// Indicate a state transition on the resource usage.
+		mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		// Clear the back buffer and depth buffer.
+		mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+		mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 		////开始记录命令
 		//m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
 		//m_commandList->SetPipelineState(m_pipelineState.Get());
