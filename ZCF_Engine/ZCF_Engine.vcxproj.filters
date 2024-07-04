@@ -110,9 +110,6 @@
     <ClInclude Include="Source\thirdparty\tinyobjloader-release\tiny_obj_loader.h">
       <Filter>ThirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\GameLogic\DX_Camera.h">
-      <Filter>include\GameLogic</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\GameLogic\Game_Timer.h">
       <Filter>include\GameLogic</Filter>
     </ClInclude>
@@ -130,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="Source\include\Render\RenderStatePipeline.h">
       <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Common\DX_Camera.h">
+      <Filter>include\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\GameLogic\CameraControl.h">
+      <Filter>include\GameLogic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +179,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\RenderFrameGraph.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\CameraControl.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

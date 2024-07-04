@@ -5,6 +5,9 @@
 #include "d3dUtil.h"
 #include "RenderPass.h"
 #include "Buffer.h"
+#include "UploadBuffer.h"
+
+using namespace  Microsoft::WRL;
 
 namespace Engine::Render::resource
 {
@@ -14,9 +17,8 @@ namespace Engine::Render::resource
 	
 	struct FrameGraphicsPassResource
 	{
-	public:
 		//        优化成直接给handle?  由RRM算好后再直接把handle给出,然后预留一段位置,等回收过后再移动回去.
-		//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	RTV_Heap;
+		//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>		RTV_Heap;
 		//UINT64											RTV_StartIndex;
 		//UINT64											RTV_DescriptorSize;
 
@@ -28,12 +30,7 @@ namespace Engine::Render::resource
 		//		Constants	中关于Heap中下标的计算方式 :  (resource_handle - starthandle) / size;
 		//		需要个映射来找到这个pass所需的resource , 然后才能计算Index;
 		//		PassInfo.Input_SRV_Resource.names;	PassInfo.Input_CBV_Resource.names;
-		//		handle / pointer	 RRM::GetXXX(Rname)  { return un_map[name].handle; }		直接给handle还是先资源指针再获取handle?
-		//uint32_t Descriptor::GetDescriptorIndex(const DescriptorHandle& descriptorHandle) const
-	/*	{
-			return static_cast<uint32_t>
-			(descriptorHandle.gpuDescriptorHandle.ptr -mDescriptorHandleFromStart.gpuDescriptorHandle.ptr) /mDescriptorSize);
-		}*/
+		//		handle / pointer	 RRM::GetXXX(Rname)  { return un_map[name].handle; }
 
 		//std::unordered_map<std::string, D3D12_CPU_DESCRIPTOR_HANDLE*>				RenderTargets;
 		std::vector<D3D12_VERTEX_BUFFER_VIEW>			VBV;
@@ -54,6 +51,7 @@ namespace Engine::Render::resource
 	{
 		
 	};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	class RenderResourceManager
 	{
@@ -69,16 +67,15 @@ namespace Engine::Render::resource
 		//	再由lamda回调 : View.GPU_Address = Resource.GPU_Address 
 		//	再由封装后的CmdList来负责 : 具体的API_CmdList 与 API_Resource绑定
 
-		FrameGraphicsPassResource* GetFrameGraphicsResource(std::string name) {
-			return &FrameGraphicsPassResources[name];
-		};
 
-		FrameComputePassResource* GetFrameComputeResource(std::string name)
-		{
-			return &FrameComputePassResources[name];
-		}
+		//FrameComputePassResource* GetFrameComputeResource(std::string name)
+		//{
+		//	return &FrameComputePassResources[name];
+		//}
 
-		void AddPass();
+		void AddPass(renderpass::Pass_Mat_Info* PassInfo);
+		void AddDepthPass(renderpass::DepthPassInfo* PassInfo);
+		void Run();
 
 	private:
 
@@ -86,25 +83,14 @@ namespace Engine::Render::resource
 		void UploadBuffers();
 		void UploadTextures();
 
-		
 
+
+		void CreateRootSignature();
 		void CreateGraphicsPipeline();
 
 		//同步资源
 		//void CreateFenceAndEvent();
-		//void CreateBarrier();
-
-		//V,I,C,Instance,T,U
-		//是统一封装成Buffer函数组, 还是写分支但是复用一个函数?
-		//void CreateBuffer();
-		//void CreateVertexBuffer();
-
-		//void Create_API_VI_Buffer();
-
-		
-
-		
-		void CreateRootSignature();
+		//void CreateBarrier();		
 
 
 	private:
@@ -120,127 +106,88 @@ namespace Engine::Render::resource
 		HANDLE												m_fenceEvent;
 		//		一个帧一个Command Queue
 		//		一个线程一个Allocator
-		//		一个cmdlist就可以通过不同接口调用 , 然后自行发送给对应的Graphic,Compute,Copy引擎
+		//		一个cmdlist就可以通过不同接口调用 , 提交给Queue , 然后自行发送给对应的Graphic,Compute,Copy引擎
 		//		同步:	帧	大Pass	小Pass	命令队列(三种引擎之间)
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>		m_commandAllocator;
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>				m_commandAllocator;
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>			m_commandList;
+		ID3D12GraphicsCommandList* CmdList;
 		//D3D12_RESOURCE_BARRIER								m_beginResBarrier;
 		//D3D12_RESOURCE_BARRIER								m_endResBarrier;
 
 
 	private:
 
-		uint32_t	SRV_CBV_UAV_Descriptor_size	;
+		uint32_t	SRV_CBV_UAV_Descriptor_size;
 		uint32_t	Sampler_Descriptor_size;
-		//				待重构
-		uint32_t GetDescriptorIndex(std::string name , Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
-		{	
+		//				
+		uint32_t GetDescriptorIndex(std::string name, Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
+		{
+			uint32_t ID = ResourceIDs[name];
 			return static_cast<uint32_t>
-			((API_GPU_handles[name].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / SRV_CBV_UAV_Descriptor_size);
+				((API_GPU_handles[ID].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / SRV_CBV_UAV_Descriptor_size);
 		}
 		uint32_t GetSamplerIndex(std::string name, Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	Heap)
 		{
+			uint32_t ID = ResourceIDs[name];
 			return static_cast<uint32_t>
-				((API_GPU_handles[name].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / Sampler_Descriptor_size);
+				((API_GPU_handles[ID].Get()->ptr - Heap.Get()->GetGPUDescriptorHandleForHeapStart().ptr) / Sampler_Descriptor_size);
 		}
-		 //							Frame	Graphics  Runtime
-//		struct FrameGraphicsPassResource
-//		{
-//			public:
-//				//        优化成直接给handle?  由RRM算好后再直接把handle给出,然后预留一段位置,等回收过后再移动回去.
-//				//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	RTV_Heap;
-//				//UINT64											RTV_StartIndex;
-//				//UINT64											RTV_DescriptorSize;
-//
-//				Microsoft::WRL::ComPtr<ID3D12PipelineState>		PSO;
-//				Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	SRV_Heap;
-//				Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	CBV_Heap;
-//				std::vector<uint32_t>							Constants;
-//				//		Constants	中关于Heap中下标的计算方式 :  (resource_handle - starthandle) / size;
-//				//		需要个映射来找到这个pass所需的resource , 然后才能计算Index;
-//				//		PassInfo.Input_SRV_Resource.names;	PassInfo.Input_CBV_Resource.names;
-//				//		handle / pointer	 RRM::GetXXX(Rname)  { return un_map[name].handle; }		直接给handle还是先资源指针再获取handle?
-//				//uint32_t Descriptor::GetDescriptorIndex(const DescriptorHandle& descriptorHandle) const
-//			/*	{
-//					return static_cast<uint32_t>   
-//					(descriptorHandle.gpuDescriptorHandle.ptr -mDescriptorHandleFromStart.gpuDescriptorHandle.ptr) /mDescriptorSize);
-//				}*/
-//
-//				std::unordered_map<std::string, Buffer::RenderTargetBuffer*>				RenderTargets;
-//				D3D12_VERTEX_BUFFER_VIEW*						VBV;
-//				D3D12_VERTEX_BUFFER_VIEW*						IBV;
-//				D3D12_CPU_DESCRIPTOR_HANDLE*					DSV;
-//
-//
-//				//	  如果放基类指针  使用时记得用	Dynamic_cast	转换一下
-//		};
-//
-//		//						<P_Mat_name , GR>
-		std::unordered_map<std::string, FrameGraphicsPassResource>								FrameGraphicsPassResources;
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		
-//		//					Frame	 Compute	Runtime
-//		struct FrameComputePassResource
-//		{
-//
-//		};
+		//							Frame	Graphics  Runtime
+		FrameGraphicsPassResource& GetFrameGraphicsResource(std::string name)
+		{
+			return FrameGraphicsPassResources[name];
+		};
+		std::unordered_map<std::string, FrameGraphicsPassResource>				FrameGraphicsPassResources;
+		//std::unordered_map<std::string, FrameComputePassResource>				FrameComputePassResources;
 		//						<P_Ferture_name , CR>
-		std::unordered_map<std::string, FrameComputePassResource>								FrameComputePassResources;
+
+		std::vector<ID3D12DescriptorHeap>										CPU_DescriptorHeaps;
+		std::vector<ID3D12DescriptorHeap>										GPU_DescriptorHeaps;
+		std::vector<renderpass::Pass_Mat_Info*>									PassInfos;
+
+		//			资源名 --------- Descriptor View ID : 可复用
+		uint32_t	GetResourceId(std::string name) { return ResourceIDs[name]; }
+		std::unordered_map<std::string, uint32_t>				ResourceIDs;
+
+//			资源上传后就不用了,之后都是用的View
+		//ID3D12Resource	GetAPI_Resource()
+		std::unordered_map<uint32_t , ComPtr< ID3D12Resource>>					API_Resources;
+//			name---id---handle : 可以实现描述符复用 , 只要最终复制到GPU堆里是一起的就行 , CPU堆随便散放.只要得到
+		std::unordered_map<uint32_t, ComPtr< D3D12_CPU_DESCRIPTOR_HANDLE>>		API_CPU_handles;
+		std::vector<ComPtr< D3D12_GPU_DESCRIPTOR_HANDLE>>							API_GPU_handles;
+
+		std::vector<ComPtr<ID3D12Resource>>											UploadBuffers;
 
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//								Frames  Resource
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//									Cache	&	Debug
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>										Shaders;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>				PSO_DESCs;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>	>							PSO_States;
-			
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//									ALL_API_Resource
-	std::vector<ID3D12DescriptorHeap>						CPU_DescriptorHeaps;
-	std::vector<ID3D12DescriptorHeap>						GPU_DescriptorHeaps;
-	//			GPU堆要双缓冲ring吗?
-	
-	//			资源名 --------- Descriptor View ID : 可复用
-	std::unordered_map<std::string, uint32_t>				ResourceIDs;
-	
-	//			资源上传后就不用了,之后都是用的View
-	std::unordered_map<std::string , Microsoft::WRL::ComPtr< ID3D12Resource>>					API_Resources;
-	//			name---id---handle : 可以实现描述符复用 , 只要最终复制到GPU堆里是一起的就行 , CPU堆随便散放.只要找得到
-	std::unordered_map<uint32_t, Microsoft::WRL::ComPtr< D3D12_CPU_DESCRIPTOR_HANDLE>>			API_CPU_handles;
-	std::vector<Microsoft::WRL::ComPtr< D3D12_GPU_DESCRIPTOR_HANDLE>>							API_GPU_handles;
 
 
 
 
-		//ID3D12PipelineState*				GetPSO(std::string Pname);
-		//ID3D12Resource*						GetResource(std::string Rname);
-		//ID3D12Resource*						GetRenderTargets(std::string Pname);
-		//CD3DX12_CPU_DESCRIPTOR_HANDLE*		GetRTVs(std::string Pname);//RTV Heap 中 对应Resource 的 Handle
-		//D3D12_VERTEX_BUFFER_VIEW*			GetVBV(std::string Pname);
-		//D3D12_VERTEX_BUFFER_VIEW*			GetIBV(std::string Pname);
-		//void 								GetCBV(std::string Pname);
 
 
 
-		/*std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>			InputLayouts;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_RASTERIZER_DESC>	>						Rasterizers;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_BLEND_DESC>	>							BlendStates;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_DEPTH_STENCIL_DESC>	>					Depth_Stencils;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_PRIMITIVE_TOPOLOGY>	>					TopoLogys;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_SAMPLER_DESC>	>							Samplers;*/
-		//PSO
-		//
-		// 
-		//
-		//std::unordered_map<std::string , Comptr<MyResource>>		MyResources
-		//															DescriptorManager
-		//															UploadBuffers
-		//															Queues:G,C,Copy
-		//																
 
-	};
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//								Frames  Resource
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//									Cache	&	Debug
+	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>									Shaders;
+	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>			PSO_DESCs;
+	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>	>						PSO_States;
+		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//									ALL_API_Resource
+	//																
+
+};
 }

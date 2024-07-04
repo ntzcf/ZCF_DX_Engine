@@ -58,22 +58,22 @@ namespace Engine::Render::renderer
 		DPI.PassName = "DepthPass";
 		//DPI.RenderPSO.Shader		这也封装成一个材质吗?
 		DPI.RenderPSO.InputView.emplace_back("position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 0, 0);
-		DPI.Lamda=[](ID3D12GraphicsCommandList &cmdlist , const resource:: FrameGraphicsPassResource &Resource)
+		DPI.Lamda=[](ID3D12GraphicsCommandList *cmdlist , const resource:: FrameGraphicsPassResource &Resource)
 		{
-			cmdlist.SetPipelineState(Resource.PSO.Get());
-
-			cmdlist.IASetVertexBuffers(0,Resource.VBV.size(), Resource.VBV.data());
-			cmdlist.IASetIndexBuffer(Resource.IBV);
-
-			//cmdlist.Get()->SetDescriptorHeaps(0,Resource.Heaps.data());
-			//cmdlist->SetGraphicsRoot32BitConstants(0u, 3u, reinterpret_cast<void*>(Resource.Constants.data()), 0u);
-
-			//cmdlist->OMSetRenderTargets(Resource.RTVs.size(), Resource.RTVs.data(), 1, Resource.DSV);
-			//			参数不够的部分就手动填了 , 总不能真全自动吧
-			cmdlist.RSSetViewports();
-			cmdlist.RSSetScissorRects();
-
-			cmdlist.DrawIndexedInstanced();
+			cmdlist->SetPipelineState(Resource.PSO.Get());
+				   
+			cmdlist->IASetVertexBuffers(0,Resource.VBV.size(), Resource.VBV.data());
+			cmdlist->IASetIndexBuffer(Resource.IBV);
+				   
+			//cmdli->t.Get()->SetDescriptorHeaps(0,Resource.Heaps.data());
+			//cmdli->t->SetGraphicsRoot32BitConstants(0u, 3u, reinterpret_cast<void*>(Resource.Constants.data()), 0u);
+				   
+			cmdlist->OMSetRenderTargets(Resource.RTVs.size(), Resource.RTVs.data(), 1, Resource.DSV);
+			//		>-	参数不够的部分就手动填了 , 总不能真全自动吧
+			cmdlist->RSSetViewports();
+			cmdlist->RSSetScissorRects();
+				   
+			cmdlist->DrawIndexedInstanced();
 		};
 		//RFG->Add_Pass();
 		//RFG->Add_Resource();

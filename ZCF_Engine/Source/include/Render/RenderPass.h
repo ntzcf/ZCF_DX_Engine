@@ -5,12 +5,13 @@
 #include "Buffer.h"
 #include "RenderStatePipeline.h"
 
+//using namespace Engine::Render::resource;
+
+class Engine::Render::resource::FrameGraphicsPassResource;
+class Engine::Render::resource::RenderResourceManager;
+
 namespace Engine::Render::renderpass
 {
-	using namespace Engine::Render::resource;
-	class resource::RenderResourceManager;
-	class resource::FrameGraphicsPassResource;
-	class resource::FrameComputePassResource;
 
 	///////////////////////////////////////////////////////PSO
 	//		//									ALL_My_Buffer_Resource
@@ -32,8 +33,13 @@ namespace Engine::Render::renderpass
 	/// <summary>
 	/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// </summary>
+	/// 
+	enum PassInfoType
+	{
+		Depth,
 
-	class resource::FrameGraphicsPassResource;
+	};
+	//class resource::FrameGraphicsPassResource;
 	class Pass_Mat_Info
 	{
 	public:
@@ -48,6 +54,10 @@ namespace Engine::Render::renderpass
 		virtual void PassExcuteBegin();
 		virtual void PassExcute();
 		virtual void PassExcuteEnd();
+
+		virtual PassInfoType GetPassInfoType() = 0;
+		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R) = 0;
+		virtual std::string Getname();
 
 	public:
 		//std::string				Pname;//	Pass
@@ -91,21 +101,28 @@ namespace Engine::Render::renderpass
 	};
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+	//class resource::FrameGraphicsPassResource;
 	class DepthPassInfo : public Pass_Mat_Info
 	{
 	public:
 		DepthPassInfo() {};
 		~DepthPassInfo() {};
 
+		PassInfoType GetPassInfoType() { return PassInfoType::Depth; };
+
+		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R)
+		{
+			Lamda(cmdlist, R);
+		};
 	public:
 		std::string				PassName;
 		std::string				MaterialName;
 
 		RenderPSO				RenderPSO;
 
-		std::function<void(ID3D12GraphicsCommandList&, const resource::FrameGraphicsPassResource&)>				Lamda;
+		std::function<void(ID3D12GraphicsCommandList*, const resource::FrameGraphicsPassResource&)>				Lamda;
+		
+		
 		//		Queue
 		bool					isGraphics;
 		//		PSO

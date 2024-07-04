@@ -20,8 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\include\Common\Common.hpp" />
+    <ClInclude Include="Source\include\Common\DX_Camera.h" />
     <ClInclude Include="Source\include\Common\Vertex\Vertex.h" />
-    <ClInclude Include="Source\include\GameLogic\DX_Camera.h" />
+    <ClInclude Include="Source\include\GameLogic\CameraControl.h" />
     <ClInclude Include="Source\include\GameLogic\GameLogic.hpp" />
     <ClInclude Include="Source\include\GameLogic\Game_Timer.h" />
     <ClInclude Include="Source\include\Headers.hpp" />
@@ -53,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\src\Buffer.cpp" />
+    <ClCompile Include="Source\src\CameraControl.cpp" />
     <ClCompile Include="Source\src\d3dUtil.cpp" />
     <ClCompile Include="Source\src\DX_Camera.cpp" />
     <ClCompile Include="Source\src\Game_Timer.cpp" />

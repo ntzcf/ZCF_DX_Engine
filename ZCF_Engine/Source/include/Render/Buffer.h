@@ -33,7 +33,8 @@ namespace Engine::Render::resource::Buffer
 		
 		Root_Constant,
 		Constant_Buffer,
-		
+		Struct_Buffer,
+
 		Texture_2D,
 		Texture_3D,
 		Texture_Array,

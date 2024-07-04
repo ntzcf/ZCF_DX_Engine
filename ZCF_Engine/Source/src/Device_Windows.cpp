@@ -46,7 +46,7 @@ namespace Engine::Render::resource::Device_Windows
 	{
 		//先来个围栏,确保是可以重建的时候
 		CreateSwapChain();
-		CreatesRTVs();
+		CreateRTVs();
 		CreatesDSVs();
 	}
 
