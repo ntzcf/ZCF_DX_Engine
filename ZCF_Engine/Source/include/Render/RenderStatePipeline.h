@@ -26,9 +26,10 @@ namespace Engine::Render::renderpass
 	struct Shader
 	{
 		ShaderType		ShaderType;
+		std::string     ShaderName;
+		std::string		ShaderMain;
 		std::string		ShaderPath;
 		std::string		ShaderVersion;
-		std::string		ShaderMain;
 		//使用时候注意;用	string.c_str()	转换
 		uint16_t		ShaderFlags1;
 		uint16_t		ShaderFlags2;
@@ -103,7 +104,7 @@ namespace Engine::Render::renderpass
 		
 		FillMode			               FillMode=FillMode::Solid;
 		CullMode			               CullMode=CullMode::Back;
-		BOOL                               FrontCounterClockwise=1;
+		BOOL                               FrontCounterClockwise=0;
 	};
 
 
@@ -114,12 +115,21 @@ namespace Engine::Render::renderpass
 	{
 	public:
 		
+		uint32_t								RenderTargetNum=1;
 		Shader									Shader;
 		Rasterize								Rasterize;
-		std::vector<InputElementView>			InputView;
+		std::vector<InputElementView>			InputViews;
 		MutiSample								MutiSample;
-		BlendState								BlendState=BlendState::DefaultBlend;
+		std::vector<BlendState>					BlendState;
 		Topology								Topolopy=Topology::Triangle;
 
 	};
+
+	D3D12_INPUT_ELEMENT_DESC CreateInputDESC(InputElementView InputView);
+
+	D3D12_RASTERIZER_DESC CreateDefaultRasterDESC(Rasterize Rasterize);
+
+	D3D12_BLEND_DESC      CreateDefaultOpacityBlendState();
+
+	D3D12_DEPTH_STENCIL_DESC  CreateDefaultD_S_State();
 }

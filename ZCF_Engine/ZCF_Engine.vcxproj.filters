@@ -184,9 +184,15 @@
     <ClCompile Include="Source\src\CameraControl.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Source\src\RenderSataePipeline.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shaders\shader1.hlsl">
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\shaders\DepthPass.hlsl">
       <Filter>资源文件</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "Render/RenderResourceManager.h"
 #include "Render/SrcRenderHelper.h"
+#include <minwinbase.h>
 
 using namespace Engine::Render::renderpass;
 
@@ -19,6 +20,17 @@ namespace Engine::Render::resource
 		m_renderTarget = DW.GetRenderTarget();
 		m_frameIndex = DW.GetCurrentFrameIndex();
 
+		//提前编译 , 或者加载已编译好的Shader ,以及的缓存PSO
+		mShaders.emplace("DepthPassVS", new ComPtr<ID3DBlob>);
+		mShaders.emplace("DepthPassPS", new ComPtr<ID3DBlob>);
+		
+		mShaders["DepthPassVS"] = d3dUtil::CompileShader(
+			L"E:\\My projects\\DX12_Engine\\ZCF_Engine\\ZCF_Engine\\Source\\shaders\\DepthPass.hlsl",
+			nullptr, "VS", "vs_5_0");
+
+		mShaders["DepthPassPS"] = d3dUtil::CompileShader(
+			L"E:\\My projects\\DX12_Engine\\ZCF_Engine\\ZCF_Engine\\Source\\shaders\\DepthPass.hlsl",
+			nullptr, "PS", "ps_5_0");
 
 	}
 
@@ -314,8 +326,10 @@ namespace Engine::Render::resource
 
 	void RenderResourceManager::AddPass(renderpass::Pass_Mat_Info* PassInfo)
 	{
-		PassInfo->GetPassInfoType() == renderpass::PassInfoType::Depth;
-		AddDepthPass(dynamic_cast<renderpass::DepthPassInfo*>(PassInfo));
+		if(PassInfo->GetPassInfoType() == renderpass::PassInfoType::Depth)
+		{
+			AddDepthPass(dynamic_cast<renderpass::DepthPassInfo*>(PassInfo));
+		}
 	}
 
 	void RenderResourceManager::AddDepthPass(renderpass::DepthPassInfo* PassInfo)
@@ -324,16 +338,134 @@ namespace Engine::Render::resource
 		auto* VP = &(PassInfo->Vertex_Attribute_Stream[Buffer::ResourceInfoUsage::VBV].VertexData);
 		auto* IP = &(PassInfo->Index_Stream[Buffer::ResourceInfoUsage::IBV].VertexData);
 
-		ComPtr<ID3D12Resource>	UploadBuffer;
+		ComPtr<ID3D12Resource>	UploadBuffer1;
+		ComPtr<ID3D12Resource>	UploadBuffer2;
 
-		API_Resources["IndexBuffer"] = d3dUtil::CreateDefaultBuffer
-		(m_device.Get(), m_commandList.Get(), IP->data(), IP->size() * 4, UploadBuffer);
+		auto PassName = PassInfo->Getname();
 
-		API_Resources["VertexBuffer"]  = d3dUtil::CreateDefaultBuffer
-		(m_device.Get(), m_commandList.Get(), VP->data(), VP->size() * 4, UploadBuffer);
-		
+		ResourceIDs.emplace(PassName+"VertexBuffer", FrameResourceId);
+		API_Resources[FrameResourceId++]  = d3dUtil::CreateDefaultBuffer
+		(m_device.Get(), m_commandList.Get(), VP->data(), VP->size() * 4, UploadBuffer1);
+
+		ResourceIDs.emplace(PassName+"IndexBuffer", FrameResourceId);
+		API_Resources[FrameResourceId++] = d3dUtil::CreateDefaultBuffer
+		(m_device.Get(), m_commandList.Get(), IP->data(), IP->size() * 4, UploadBuffer2);
 		
 		//	PSO
+		auto RenderPSO = PassInfo->RenderPSO;
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC  PSO;
+		ZeroMemory(&PSO, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		//			InputView
+		auto InputViews = PassInfo->RenderPSO.InputViews;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> InputDESC;
+		for (int i = 0; i <InputViews.size(); i++)
+		{
+			InputDESC.push_back(renderpass::CreateInputDESC(InputViews[i]));
+		}
+		PSO.InputLayout = { InputDESC.data(),(uint32_t)InputDESC.size() };
+		//			RootSignature
+		PSO.pRootSignature = NULL;
+		//			Raster;
+		PSO.RasterizerState = renderpass::CreateDefaultRasterDESC(PassInfo->RenderPSO.Rasterize);
+		//			BlendState
+		PSO.BlendState = CreateDefaultOpacityBlendState();
+		//			DepthStencilState
+		PSO.DepthStencilState = CreateDefaultD_S_State();
+		//			SampleMask
+		PSO.SampleMask = UINT_MAX;
+		//			PrimitiveTopolopgType
+		PSO.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		//			RenderTargets
+		PSO.NumRenderTargets = 0;
+		//			RenderTarget Format
+		//PSO.RTVFormats[0]
+		//
+		//PSO.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+		//PSO.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		PSO.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	
+		//			Shader
+		PSO.VS =
+		{
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shader.ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shader.ShaderName]->GetBufferSize()
+		};
+		PSO.PS =
+		{
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shader.ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shader.ShaderName]->GetBufferSize()
+		};
+
+		mPSOs.emplace("DepthPass",  new ComPtr<ID3D12PipelineState>);
+		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&PSO, IID_PPV_ARGS(&mPSOs["DepthPass"])));
+		//
+		// PSO for shadow map pass.
+		//
+		//D3D12_GRAPHICS_PIPELINE_STATE_DESC smapPsoDesc = PSO;
+		//smapPsoDesc.RasterizerState.DepthBias = 100000;
+		//smapPsoDesc.RasterizerState.DepthBiasClamp = 0.0f;
+		//smapPsoDesc.RasterizerState.SlopeScaledDepthBias = 1.0f;
+		//smapPsoDesc.pRootSignature = mRootSignature.Get();
+		//smapPsoDesc.VS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["shadowVS"]->GetBufferPointer()),
+		//	mShaders["shadowVS"]->GetBufferSize()
+		//};
+		//smapPsoDesc.PS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["shadowOpaquePS"]->GetBufferPointer()),
+		//	mShaders["shadowOpaquePS"]->GetBufferSize()
+		//};
+
+		//// Shadow map pass does not have a render target.
+		//smapPsoDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+		//smapPsoDesc.NumRenderTargets = 0;
+		//ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&smapPsoDesc, IID_PPV_ARGS(&mPSOs["shadow_opaque"])));
+
+		////
+		//// PSO for debug layer.
+		////
+		//D3D12_GRAPHICS_PIPELINE_STATE_DESC debugPsoDesc = PSO;
+		//debugPsoDesc.pRootSignature = mRootSignature.Get();
+		//debugPsoDesc.VS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["debugVS"]->GetBufferPointer()),
+		//	mShaders["debugVS"]->GetBufferSize()
+		//};
+		//debugPsoDesc.PS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["debugPS"]->GetBufferPointer()),
+		//	mShaders["debugPS"]->GetBufferSize()
+		//};
+		//ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&debugPsoDesc, IID_PPV_ARGS(&mPSOs["debug"])));
+
+		////
+		//// PSO for sky.
+		////
+		//D3D12_GRAPHICS_PIPELINE_STATE_DESC skyPsoDesc = PSO;
+
+		//// The camera is inside the sky sphere, so just turn off culling.
+		//skyPsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
+		//// Make sure the depth function is LESS_EQUAL and not just LESS.  
+		//// Otherwise, the normalized depth values at z = 1 (NDC) will 
+		//// fail the depth test if the depth buffer was cleared to 1.
+		//skyPsoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		//skyPsoDesc.pRootSignature = mRootSignature.Get();
+		//skyPsoDesc.VS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["skyVS"]->GetBufferPointer()),
+		//	mShaders["skyVS"]->GetBufferSize()
+		//};
+		//skyPsoDesc.PS =
+		//{
+		//	reinterpret_cast<BYTE*>(mShaders["skyPS"]->GetBufferPointer()),
+		//	mShaders["skyPS"]->GetBufferSize()
+		//};
+		//ThrowIfFailed(md3dDevice->CreateGraphicsPipelineState(&skyPsoDesc, IID_PPV_ARGS(&mPSOs["sky"])));
+
+
 		
 		//FrameGraphicsPassResource Resource;
 	}

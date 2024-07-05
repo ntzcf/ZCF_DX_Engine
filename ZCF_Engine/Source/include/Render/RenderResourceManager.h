@@ -6,6 +6,7 @@
 #include "RenderPass.h"
 #include "Buffer.h"
 #include "UploadBuffer.h"
+#include "RenderStatePipeline.h"
 
 using namespace  Microsoft::WRL;
 
@@ -117,6 +118,8 @@ namespace Engine::Render::resource
 
 	private:
 
+		uint32_t FrameResourceId;
+
 		uint32_t	SRV_CBV_UAV_Descriptor_size;
 		uint32_t	Sampler_Descriptor_size;
 		//				
@@ -182,7 +185,8 @@ namespace Engine::Render::resource
 	//									Cache	&	Debug
 	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>									Shaders;
 	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>			PSO_DESCs;
-	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D12PipelineState>	>						PSO_States;
+		std::unordered_map<std::string, ComPtr<ID3DBlob>>					mShaders;
+		std::unordered_map<std::string, ComPtr<ID3D12PipelineState>>		mPSOs;
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

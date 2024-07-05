@@ -63,6 +63,7 @@
     <ClCompile Include="Source\src\RenderFrameGraph.cpp" />
     <ClCompile Include="Source\src\RenderPass.cpp" />
     <ClCompile Include="Source\src\RenderResourceManager.cpp" />
+    <ClCompile Include="Source\src\RenderSataePipeline.cpp" />
     <ClCompile Include="Source\src\SceneManager.cpp" />
     <ClCompile Include="Source\src\SceneObject.cpp" />
     <ClCompile Include="Source\src\ZCF_engine.cpp" />
@@ -71,8 +72,10 @@
     <ClCompile Include="Source\src\Device_Windows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shaders\shader1.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Source\shaders\DepthPass.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
