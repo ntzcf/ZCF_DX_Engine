@@ -71,28 +71,25 @@
     <ClInclude Include="Source\include\Render\d3dx12.h">
       <Filter>include\Render\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\Buffer.h">
+    <ClInclude Include="Source\include\Render\ResAttribute.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\Device_Windows.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderResourceManager.h">
+    <ClInclude Include="Source\include\Render\RenderManager.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderPass.h">
+    <ClInclude Include="Source\include\Render\RenderPassInfo.h">
       <Filter>include\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\SrcRenderHelper.h">
-      <Filter>include\Render\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Scene\SceneObject.h">
+    <ClInclude Include="Source\include\Scene\ScenePrimitive.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Scene\Scene_Helper.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Scene\Loader.h">
+    <ClInclude Include="Source\include\Scene\SceneLoader.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\thirdparty\stb\stb_image.h">
@@ -113,7 +110,7 @@
     <ClInclude Include="Source\include\Render\UploadBuffer.h">
       <Filter>include\Render\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderStatePipeline.h">
+    <ClInclude Include="Source\include\Render\RenderPSO.h">
       <Filter>include\Render\Resource</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Common\DX_Camera.h">
@@ -121,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="Source\include\GameLogic\CameraControl.h">
       <Filter>include\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Lights.h">
+      <Filter>include\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Materials.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\Texture.h">
+      <Filter>include\Render\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\include\Render\TextureLoader.h">
+      <Filter>include\Render\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,16 +148,16 @@
     <ClCompile Include="Source\src\SceneManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\RenderResourceManager.cpp">
+    <ClCompile Include="Source\src\RenderManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\Buffer.cpp">
+    <ClCompile Include="Source\src\ResAttribute.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\RenderPass.cpp">
+    <ClCompile Include="Source\src\RenderPassInfo.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\SceneObject.cpp">
+    <ClCompile Include="Source\src\ScenePrimitive.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\DX_Camera.cpp">
@@ -157,7 +166,7 @@
     <ClCompile Include="Source\src\Game_Timer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\Loader.cpp">
+    <ClCompile Include="Source\src\SceneLoader.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Source\src\d3dUtil.cpp">
@@ -172,7 +181,10 @@
     <ClCompile Include="Source\src\CameraControl.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Source\src\RenderSataePipeline.cpp">
+    <ClCompile Include="Source\src\RenderPSO.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\src\TextureLoader.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

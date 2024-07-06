@@ -2,7 +2,7 @@
 #include "d3dUtil.h"
 
 
-namespace Engine::Render::resource::Device_Windows
+namespace Engine::Render::resource
 {
 
 	class DeviceWindows

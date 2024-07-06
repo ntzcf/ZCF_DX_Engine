@@ -2,11 +2,11 @@
 
 #include "d3dUtil.h"
 
-#include "Scene/Materials.h"
+#include "Materials.h"
 
 namespace Engine::Render::resource
 {
-	using namespace Engine::scene::Materials;
+	
 	//				PSO
 	enum ShaderType
 	{

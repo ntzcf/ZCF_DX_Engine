@@ -6,10 +6,11 @@
 #include "Materials.h"
 #include "TextureLoader.h"
 #include "Texture.h"
+#include "RenderPassInfo.h"
 
 using namespace  Microsoft::WRL;
 
-namespace Engine::Render::resource
+namespace Engine::Render
 {
 	/// <summary>
 	/// //////////////////////////////////////////	C O M	智能指针 : 无需管理释放等问题
@@ -95,7 +96,7 @@ namespace Engine::Render::resource
 
 	private:
 		//Device
-		Device_Windows::DeviceWindows						DW;
+		resource::DeviceWindows						DW;
 		Microsoft::WRL::ComPtr<ID3D12Device>				m_device;
 		Microsoft::WRL::ComPtr<ID3D12CommandQueue>			m_commandQueue;
 		//Device Update
@@ -110,14 +111,14 @@ namespace Engine::Render::resource
 		//		同步:	帧	大Pass	小Pass	命令队列(三种引擎之间)
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator>				m_commandAllocator;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>			m_commandList;
-		ID3D12GraphicsCommandList* CmdList;
+		//ID3D12GraphicsCommandList* CmdList;
 		//D3D12_RESOURCE_BARRIER								m_beginResBarrier;
 		//D3D12_RESOURCE_BARRIER								m_endResBarrier;
 
 
 	private:
 
-		uint32_t FrameResourceId;
+		uint32_t	FrameResourceId;
 
 		uint32_t	SRV_CBV_UAV_Descriptor_size;
 		uint32_t	Sampler_Descriptor_size;
@@ -143,22 +144,6 @@ namespace Engine::Render::resource
 		//std::unordered_map<std::string, FrameComputePassResource>				FrameComputePassResources;
 		//						<P_Ferture_name , CR>
 
-		std::vector<ID3D12DescriptorHeap>										CPU_DescriptorHeaps;
-		std::vector<ID3D12DescriptorHeap>										GPU_DescriptorHeaps;
-		std::vector<renderpass::Pass_Mat_Info*>									PassInfos;
-
-		//			资源名 --------- Descriptor View ID : 可复用
-		uint32_t	GetResourceId(std::string name) { return ResourceIDs[name]; }
-		std::unordered_map<std::string, uint32_t>				ResourceIDs;
-
-//			资源上传后就不用了,之后都是用的View
-		//ID3D12Resource	GetAPI_Resource()
-		std::unordered_map<uint32_t , ComPtr< ID3D12Resource>>					API_Resources;
-//			name---id---handle : 可以实现描述符复用 , 只要最终复制到GPU堆里是一起的就行 , CPU堆随便散放.只要得到
-		std::unordered_map<uint32_t, ComPtr< D3D12_CPU_DESCRIPTOR_HANDLE>>		API_CPU_handles;
-		std::vector<ComPtr< D3D12_GPU_DESCRIPTOR_HANDLE>>							API_GPU_handles;
-
-		std::vector<ComPtr<ID3D12Resource>>											UploadBuffers;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,22 +152,38 @@ namespace Engine::Render::resource
 	//									Cache	&	Debug
 	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3DBlob>>									Shaders;
 	//std::unordered_map<std::string, Microsoft::WRL::ComPtr<D3D12_GRAPHICS_PIPELINE_STATE_DESC>>			PSO_DESCs;
-		std::unordered_map<std::string, ComPtr<ID3DBlob>>					mShaders;
 		std::unordered_map<std::string, ComPtr<ID3D12PipelineState>>		mPSOs;
-		
+		std::unordered_map<std::string, ComPtr<ID3DBlob>>					mShaders;
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//									ALL_API_Resource
+	//									ALL_Resource
+		std::vector<renderpass::Pass_Mat_Info*>									PassInfos;
 	//																
 		std::string							ResourceFileDir = "E:/My projects/DX12_Engine/ZCF_Engine/Resources/";
 
-		std::set<CommonMaterial>										Materials;
+		std::set<resource::CommonMaterial>										Materials;
 		std::set<std::string>											TextureNames;
 
-		std::unordered_map<std::string, STB_Texture>					Textures;
+		STB_Texture_loader												TexLoader;
+		std::unordered_map<std::string, resource::STB_Texture>					Textures;
 
+	//	
+		std::vector<ID3D12DescriptorHeap>										CPU_DescriptorHeaps;
+		std::vector<ID3D12DescriptorHeap>										GPU_DescriptorHeaps;
+		
+		std::unordered_map<uint32_t , ComPtr< ID3D12Resource>>					API_Resources;
+		
+		std::unordered_map<std::string, uint32_t>								ResourceIDs;
+		uint32_t	GetResourceId(std::string name) { return ResourceIDs[name]; }
+	//			资源名 --------- Descriptor View ID : 可复用
+	//		CPU端可以提前创好 , 用时复制
+		std::unordered_map<uint32_t, ComPtr< D3D12_CPU_DESCRIPTOR_HANDLE>>		API_CPU_handles;
+	//		GPU端的话 , 要根据Pass的设置来灵活调整 , 需要另外的管理方案
+		//			待构思
+		std::vector<ComPtr< D3D12_GPU_DESCRIPTOR_HANDLE>>						API_GPU_handles;
 
+	//	std::vector<ComPtr<ID3D12Resource>>											UploadBuffers;
 };
 
 }

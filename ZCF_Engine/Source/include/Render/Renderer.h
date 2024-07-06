@@ -1,9 +1,9 @@
 #pragma once
 #include "RenderFrameGraph.h"
 #include "d3dUtil.h"
-#include "RenderPass.h"
+#include "RenderPassInfo.h"
 #include "Scene/SceneManager.h"
-#include "RenderStatePipeline.h"
+#include "RenderPSO.h"
 class RenderResourceManager;
 
 namespace Engine::Render::renderer

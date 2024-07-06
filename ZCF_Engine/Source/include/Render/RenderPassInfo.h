@@ -2,13 +2,15 @@
 
 #include "d3dUtil.h"
 #include "Scene/SceneManager.h"
-#include "Buffer.h"
-#include "RenderStatePipeline.h"
+
+#include "RenderManager.h"
+#include "ResAttribute.h"
+#include "RenderPSO.h"
 
 //using namespace Engine::Render::resource;
 
-class Engine::Render::resource::FrameGraphicsPassResource;
-class Engine::Render::resource::RenderResourceManager;
+class Engine::Render::FrameGraphicsPassResource;
+class Engine::Render::RenderResourceManager;
 
 namespace Engine::Render::renderpass
 {
@@ -57,7 +59,7 @@ namespace Engine::Render::renderpass
 		//virtual void PassExcuteEnd();
 
 		virtual PassInfoType GetPassInfoType() = 0;
-		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R) = 0;
+		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R) = 0;
 
 
 		//							In/Out Buffer,Texture
@@ -82,7 +84,7 @@ namespace Engine::Render::renderpass
 
 		PassInfoType GetPassInfoType() { return PassInfoType::Depth; };
 
-		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R)
+		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R)
 		{
 			Lamda(cmdlist, R);
 		};
@@ -90,9 +92,9 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
-		RenderPSO				RenderPSO;
+		resource::RenderPSO				RenderPSO;
 
-		std::function<void(ID3D12GraphicsCommandList*, const resource::FrameGraphicsPassResource&)>				Lamda;
+		std::function<void(ID3D12GraphicsCommandList*, const FrameGraphicsPassResource&)>				Lamda;
 		
 		
 		//		Queue
@@ -115,7 +117,7 @@ namespace Engine::Render::renderpass
 
 		PassInfoType GetPassInfoType() { return PassInfoType::GBuffer; };
 
-		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R)
+		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R)
 		{
 			Lamda(cmdlist, R);
 		};
@@ -123,15 +125,15 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
-		std::function<void(ID3D12GraphicsCommandList*, const resource::FrameGraphicsPassResource&)>				Lamda;
+		std::function<void(ID3D12GraphicsCommandList*, const FrameGraphicsPassResource&)>				Lamda;
 
 		bool					isGraphics;
 
 		//				Position		Normal		Tangent?		UV0			UV1		..............
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>		Vertex_Attribute_Stream;
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				Index_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::VertexBuffer>		Vertex_Attribute_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::Buffer::IndexBuffer>				Index_Stream;
 		//				GBuffer1		GBuffer2		GBuffer3		GBuffer4		GBuffer5
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>								ResourceInofs;
 
 	};
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,12 +146,12 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,resource::FrameComputePassResource)>				Lamda;
+		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,FrameComputePassResource)>				Lamda;
 
 		bool					isGraphics;
 			//		Compute
 		//			IN				OUT:UAV
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::ResourceInfoUsage, resource::ResourceInfo>								ResourceInofs;
 
 	};
 
@@ -167,7 +169,7 @@ namespace Engine::Render::renderpass
 		bool					isGraphics;
 
 		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
-			resource::RenderResourceManager,
+			RenderResourceManager,
 			Microsoft::WRL::ComPtr<ID3D12Device>)>							Lamda;
 
 		//	Setting?
@@ -175,7 +177,7 @@ namespace Engine::Render::renderpass
 		//			PSO
 		//PSO						PSO;
 		//  Input		Data		&		Attribute   : 
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>								ResourceInofs;
 		//	Output		Buffer		Attribute:	Name , Type , Format , Size , ............
 		
 		//	Queue Type
