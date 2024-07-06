@@ -164,9 +164,9 @@ namespace Engine::Render
 		std::string							ResourceFileDir = "E:/My projects/DX12_Engine/ZCF_Engine/Resources/";
 
 		std::set<resource::CommonMaterial>										Materials;
-		std::set<std::string>											TextureNames;
+		std::set<std::string>													TextureNames;
 
-		STB_Texture_loader												TexLoader;
+		STB_Texture_loader														TexLoader;
 		std::unordered_map<std::string, resource::STB_Texture>					Textures;
 
 	//	

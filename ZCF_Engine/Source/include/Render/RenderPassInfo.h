@@ -60,7 +60,7 @@ namespace Engine::Render::renderpass
 
 		virtual PassInfoType GetPassInfoType() = 0;
 		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R) = 0;
-		virtual std::string GetPassName();
+		virtual std::string GetPassName()=0;
 
 		//							In/Out Buffer,Texture
 		//							Resource In CPU
@@ -83,6 +83,8 @@ namespace Engine::Render::renderpass
 		~DepthPassInfo() {};
 
 		PassInfoType GetPassInfoType() { return PassInfoType::Depth; };
+
+		std::string GetPassName() { return "DepthPass"; }
 
 		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R)
 		{
@@ -118,6 +120,8 @@ namespace Engine::Render::renderpass
 		~GBufferPassInfo() {};
 
 		PassInfoType GetPassInfoType() { return PassInfoType::GBuffer; };
+
+		std::string GetPassName() { return "GBufferPass"; }
 
 		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R)
 		{
