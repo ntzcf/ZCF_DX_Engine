@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Scene_Helper.h"
+#include "d3dUtil.h"
+#include "TextureLoader.h"
 
-#define TINYOBJLOADER_IMPLEMENTATION 
-#include "tinyobjloader-release/tiny_obj_loader.h"
-#include "stb/stb_image.h"
-
-namespace Engine::scene::S_Texture
+namespace Engine::Render::resource
 {
    /* aiTextureType_NONE = 0,
 

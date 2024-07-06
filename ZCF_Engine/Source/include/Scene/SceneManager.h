@@ -1,8 +1,6 @@
 #pragma once
 
-#include "SceneObject.h"
-#include "Lights.h"
-#include "Materials.h"
+#include "ScenePrimitive.h"
 
 namespace Engine::scene
 {
@@ -30,7 +28,7 @@ namespace Engine::scene
 
 		const std::unordered_map<Object::Vertex_Attribute, std::vector<float>>* GetVAS() {return &Vertex_Attribute_Stream; }
 		const std::vector<uint32_t>*				GetIS()		{ return &Index_Stream; };
-		const std::vector<Object::Assimp_Object>* GetObjecs()	{ return &Objects; };
+		const std::vector<Object::Assimp_Primitive>* GetObjecs()	{ return &Primitives; };
 
 		const uint32_t*		GetVertexCommonNums() { return &VertexCommonNums; };
 		const uint32_t*		GetIndexNums() { return &IndexNums; };
@@ -43,32 +41,35 @@ namespace Engine::scene
 		//		顶点属性 & 数据			拓扑属性 & 数据		材质属性 & 数据
 		//std::vector<Loader::Assimp_Loader>											Assimp_Loaders;
 		//std::vector<Loader::Model>													Models;
-		Loader::STB_Texture_loader													Tex_Loader;
+		//Loader::STB_Texture_loader													Tex_Loader;
 
 		//	可以话先统计下数量,	然后调用vector.resize(ALL nums);	减少转移损耗
 
 		//	直接序列化流也行
-		 std::vector<Object::Assimp_Object>											Objects;
-		 std::unordered_map<Object::Vertex_Attribute , std::vector<float>>			Vertex_Attribute_Stream;
-		 std::vector<uint32_t>														Index_Stream;
-
-		std::vector<Materials::CommonMaterial>									Materials;
-		std::vector<S_Texture::STB_Texture>										Textures;
-		std::vector<Materials::S_Constant>										Constants;
+			std::unordered_map<std::string, std::vector<uint32_t>>						Model_P_IDs;
+			std::vector<Object::Assimp_Primitive>										Primitives;
+		 
+			std::unordered_map<Object::Vertex_Attribute , std::vector<float>>			Vertex_Attribute_Stream;
+			std::vector<uint32_t>														Index_Stream;
+			std::set<std::string >														MatNames;
+		//std::vector<Materials::CommonMaterial>										Materials;
+		//std::set<std::string >														Textures;
+		//std::vector<S_Texture::STB_Texture>											Textures;
+		//std::vector<Materials::S_Constant>										Constants;
 
 		std::string								ResourceFileDir = "E:/My projects/DX12_Engine/ZCF_Engine/Resources/";
-		uint32_t								Tex_nums;
-		uint32_t								Mat_nums;
+		//uint32_t								Tex_nums;
+		//uint32_t								Mat_nums;
 
-///////	///	///	///	//	手动指定要加载的纹理/////////////////////////////////////////////////////////////
+///////	///	///	///	//	手动指定要加载的模型 和 纹理/////////////////////////////////////////////////////////////
 		///////////////	反正有bindless///////////////////////////////
 		///////////// <model Name , Textures Name>//////////
 		/////////////<model Name ,  Texture Usage>////////////
-		std::unordered_map<std::string, std::vector<std::string>>							TexNames;
-		std::unordered_map < std::string, std::vector<Materials::S_Texture_Attribute>>		TexAtts;
+		//std::unordered_map<std::string, std::vector<std::string>>							TexNames;
+		//std::unordered_map < std::string, std::vector<Materials::S_Texture_Attribute>>		TexAtts;
 
 ///////////////////	///	///////	手动指定要加载的模型/////////////////////////////////////////////////////
-		std::vector<std::string>							ModelNames;
+		//std::vector<std::string>							ModelNames;
 		//std::vector<Object::Vertex_Attribute>				VerAtts;
 
 		/// <summary>

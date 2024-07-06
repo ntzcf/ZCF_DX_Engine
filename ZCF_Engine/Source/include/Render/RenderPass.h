@@ -58,36 +58,7 @@ namespace Engine::Render::renderpass
 
 		virtual PassInfoType GetPassInfoType() = 0;
 		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R) = 0;
-		//virtual std::string Getname();
 
-	public:
-		//std::string				Pname;//	Pass
-		//std::string				Mname;//	Material
-
-		//bool						isCompute/isGraphics;
-		
-		//	Setting?
-		//			PSO
-		//  Input		Data		&		Attribute   : 
-		//	Output		Buffer		Attribute:	Name , Type , Format , Size , ............
-		//	Queue Type
-
-		//								PiplineState
-		//	形参:PSO
-		//	RootSignature	:view形参个数,种类
-		//	Shader:		name,	code,	版本
-		//	StreamOutput	流输出
-		//	BlendState
-		//	SampleMask
-		//	RasterizerState
-		//	DepthStencilState
-		//	InputLayout
-		//	TopologyType
-		//	NumRenderTargets
-		//	RTV Formats[8]
-		//	DSV Format
-		//	SampleDesc
-		//	以上这么多的玩意儿,还可以进n步细分,假设,合并:最终优化剩下的才是需要的该Pass形参信息.
 
 		//							In/Out Buffer,Texture
 		//							Resource In CPU
@@ -131,8 +102,8 @@ namespace Engine::Render::renderpass
 		//		Resource
 		//			VBV			IBV			Position Stream			Index Stream
 		//								或者直接变成Instance Stream?
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>		Vertex_Attribute_Stream;
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				Index_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::VertexBuffer>				Vertex_Attribute_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::IndexBuffer>				Index_Stream;
 		
 	};
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

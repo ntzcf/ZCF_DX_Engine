@@ -1,10 +1,10 @@
-#include "Scene/Loader.h"
+#include "Scene/SceneLoader.h"
 #include <intsafe.h>
 #include "Scene/SceneManager.h"
 
 namespace Engine::scene::Loader
 {
-	Model::Model(const std::string& path , uint32_t UV_nums , uint32_t MatID) :UV_nums(UV_nums), MatID(MatID)
+	Model::Model(const std::string& path , uint32_t UV_nums , std::string MatID) :UV_nums(UV_nums), MatID(MatID)
 	{
 		Assimp::Importer localImporter;
 
@@ -72,7 +72,7 @@ namespace Engine::scene::Loader
 
 			int nums = mesh->mNumVertices;
 
-			Object::Assimp_Object Object;
+			Object::Assimp_Primitive Object;
 			Object.Vertex_Nums = nums;
 			Object.VertexCommonStart = *(SceneManager::GetVertexCommonNums());
 			Object.Index_Start = *(SceneManager::GetIndexNums());

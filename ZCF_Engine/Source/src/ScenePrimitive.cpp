@@ -1,14 +1,8 @@
-#include "Scene/SceneObject.h"
+#include "Scene/ScenePrimitive.h"
 
 namespace Engine::scene::Object
 {
-	Tiny_OBJ_Object::Tiny_OBJ_Object()
-	{
-	}
 
-	Tiny_OBJ_Object::~Tiny_OBJ_Object()
-	{
-	}
 
 	//void Tiny_OBJ_Object::Load_OBJ(std::string filename)
 	//{

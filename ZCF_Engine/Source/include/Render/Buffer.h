@@ -2,7 +2,7 @@
 
 #include "d3dUtil.h"
 
-namespace Engine::Render::resource::Buffer
+namespace Engine::Render::resource
 {
 
 
@@ -68,8 +68,8 @@ namespace Engine::Render::resource::Buffer
 	{
 		std::string								name;
 
-		resource::Buffer::ResourceFormat		Foramt;
-		resource::Buffer::ResourceType			Type;
+		resource::ResourceFormat		Foramt;
+		resource::ResourceType			Type;
 
 		uint32_t								Width;
 		uint32_t								Height;

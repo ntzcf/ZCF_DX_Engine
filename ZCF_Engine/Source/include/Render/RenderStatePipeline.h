@@ -4,7 +4,7 @@
 
 #include "Scene/Materials.h"
 
-namespace Engine::Render::renderpass
+namespace Engine::Render::resource
 {
 	using namespace Engine::scene::Materials;
 	//				PSO

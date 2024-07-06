@@ -3,8 +3,7 @@
 
 #include "Scene_Helper.h"
 
-#include "Loader.h"
-#include "Materials.h"
+#include "SceneLoader.h"
 
 namespace Engine::scene::Object
 {
@@ -57,14 +56,14 @@ namespace Engine::scene::Object
 
 	};*/
 
-	class Assimp_Object
+	class Assimp_Primitive
 	{
 	public:
-		Assimp_Object	() {};
-		~Assimp_Object	() {};
+		Assimp_Primitive	() {};
+		~Assimp_Primitive	() {};
 
 
-		std::vector<uint32_t>			Materials;
+		std::vector<std::string>			Materials;
 		//Vertex_Common					VertexCommonStart;
 		uint32_t						VertexCommonStart;
 		Vertex_2DTex					Vertex_2DTex;

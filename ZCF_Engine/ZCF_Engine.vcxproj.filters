@@ -86,12 +86,6 @@
     <ClInclude Include="Source\include\Render\SrcRenderHelper.h">
       <Filter>include\Render\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Scene\Lights.h">
-      <Filter>include\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Scene\Materials.h">
-      <Filter>include\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Scene\SceneObject.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
@@ -99,9 +93,6 @@
       <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Scene\Loader.h">
-      <Filter>include\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Scene\S_Texture.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\thirdparty\stb\stb_image.h">
@@ -112,9 +103,6 @@
     </ClInclude>
     <ClInclude Include="Source\include\GameLogic\Game_Timer.h">
       <Filter>include\GameLogic</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Scene\S_Vertex.h">
-      <Filter>include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\d3dUtil.h">
       <Filter>include\Render\Helper</Filter>

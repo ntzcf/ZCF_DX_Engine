@@ -12,9 +12,7 @@
 #include "assimp/scene.h"           // 读取到的模型数据都放在scene中
 #include "assimp/postprocess.h"
 
-#include "Scene/SceneObject.h"
-#include <DirectXMath.h>
-#include "Materials.h"
+#include "Scene/ScenePrimitive.h"
 #include <intsafe.h>
 
 using namespace DirectX;
@@ -24,26 +22,11 @@ namespace Engine::scene::Loader
 {
 	//class MyLoader;
 
-	class STB_Texture_loader
-	{
-	public:
-		STB_Texture_loader() {};
-		~STB_Texture_loader() {};
-
-		unsigned char* LoadTexture(char const* filename, int* x, int* y, int* channels_in_file, int desired_channels)
-		{
-			return stbi_load( filename,  x, y,  channels_in_file, desired_channels);
-		}
-
-	private:
-
-	};
-
 	class  Model
 	{
 	public:
 		// load scene for assimp
-		Model(const std::string& path , uint32_t UV_nums , uint32_t MatID);
+		Model(const std::string& path , uint32_t UV_nums , std::string  MatID);
 
 		// Traverse and process the nodes in assimp in turn
 		void TraverseNode(const aiScene* scene, aiNode* node);
@@ -52,7 +35,7 @@ namespace Engine::scene::Loader
 		void LoadMesh(const aiScene* scene, aiMesh* mesh);
 		//std::vector<uint32_t>				Materials;
 		uint32_t							UV_nums;
-		uint32_t							MatID;
+		std::string 						MatID;
 	private:
 		std::string directory;
 

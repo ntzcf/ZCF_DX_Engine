@@ -40,14 +40,10 @@
     <ClInclude Include="Source\include\Render\SrcRenderHelper.h" />
     <ClInclude Include="Source\include\Render\UploadBuffer.h" />
     <ClInclude Include="Source\include\Scene\Scene_Helper.h" />
-    <ClInclude Include="Source\include\Scene\Lights.h" />
     <ClInclude Include="Source\include\Scene\Loader.h" />
-    <ClInclude Include="Source\include\Scene\Materials.h" />
     <ClInclude Include="Source\include\Scene\Scene.hpp" />
     <ClInclude Include="Source\include\Scene\SceneManager.h" />
     <ClInclude Include="Source\include\Scene\SceneObject.h" />
-    <ClInclude Include="Source\include\Scene\S_Texture.h" />
-    <ClInclude Include="Source\include\Scene\S_Vertex.h" />
     <ClInclude Include="Source\include\ZCF_engine.h" />
     <ClInclude Include="Source\thirdparty\stb\stb_image.h" />
     <ClInclude Include="Source\thirdparty\tinyobjloader-release\tiny_obj_loader.h" />
