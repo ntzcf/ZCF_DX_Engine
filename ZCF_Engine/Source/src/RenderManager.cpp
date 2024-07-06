@@ -1,8 +1,8 @@
-#include "Render/RenderResourceManager.h"
-#include "Render/SrcRenderHelper.h"
+#include "Render/RenderManager.h"
 #include <minwinbase.h>
 
 using namespace Engine::Render::renderpass;
+using namespace Engine::Render::resource;
 
 namespace Engine::Render::resource
 {
@@ -330,13 +330,17 @@ namespace Engine::Render::resource
 		{
 			AddDepthPass(dynamic_cast<renderpass::DepthPassInfo*>(PassInfo));
 		}
+		if (PassInfo->GetPassInfoType() == renderpass::PassInfoType::GBuffer)
+		{
+			AddGBufferPass(dynamic_cast<renderpass::GBufferPassInfo*>(PassInfo));
+		}
 	}
 
 	void RenderResourceManager::AddDepthPass(renderpass::DepthPassInfo* PassInfo)
 	{
 		//  Resource & View
-		auto* VP = &(PassInfo->Vertex_Attribute_Stream[Buffer::ResourceInfoUsage::VBV].VertexData);
-		auto* IP = &(PassInfo->Index_Stream[Buffer::ResourceInfoUsage::IBV].VertexData);
+		/*auto* VP = &(PassInfo->Vertex_Attribute_Stream[ResourceUsage::VBV].VertexData);
+		auto* IP = &(PassInfo->Index_Stream[ResourceUsage::IBV].VertexData);
 
 		ComPtr<ID3D12Resource>	UploadBuffer1;
 		ComPtr<ID3D12Resource>	UploadBuffer2;
@@ -349,7 +353,10 @@ namespace Engine::Render::resource
 
 		ResourceIDs.emplace(PassName+"IndexBuffer", FrameResourceId);
 		API_Resources[FrameResourceId++] = d3dUtil::CreateDefaultBuffer
-		(m_device.Get(), m_commandList.Get(), IP->data(), IP->size() * 4, UploadBuffer2);
+		(m_device.Get(), m_commandList.Get(), IP->data(), IP->size() * 4, UploadBuffer2);*/
+
+		//					特殊资源只提供一个名字就行 , 格式啥的交给Manager去匹配
+		
 		
 		//	PSO
 		auto RenderPSO = PassInfo->RenderPSO;
@@ -361,13 +368,13 @@ namespace Engine::Render::resource
 		std::vector<D3D12_INPUT_ELEMENT_DESC> InputDESC;
 		for (int i = 0; i <InputViews.size(); i++)
 		{
-			InputDESC.push_back(renderpass::CreateInputDESC(InputViews[i]));
+			InputDESC.push_back(CreateInputDESC(InputViews[i]));
 		}
 		PSO.InputLayout = { InputDESC.data(),(uint32_t)InputDESC.size() };
 		//			RootSignature
 		PSO.pRootSignature = NULL;
 		//			Raster;
-		PSO.RasterizerState = renderpass::CreateDefaultRasterDESC(PassInfo->RenderPSO.Rasterize);
+		PSO.RasterizerState = CreateDefaultRasterDESC(PassInfo->RenderPSO.Rasterize);
 		//			BlendState
 		PSO.BlendState = CreateDefaultOpacityBlendState();
 		//			DepthStencilState
@@ -375,26 +382,38 @@ namespace Engine::Render::resource
 		//			SampleMask
 		PSO.SampleMask = UINT_MAX;
 		//			PrimitiveTopolopgType
-		PSO.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		PSO.PrimitiveTopologyType = GetDX12Topology(RenderPSO.Topolopy);
 		//			RenderTargets
-		PSO.NumRenderTargets = 0;
-		//			RenderTarget Format
-		//PSO.RTVFormats[0]
-		//
+		int i = 0;
+		for (const auto& Res : PassInfo->ResourceInfos)
+		{
+			if (Res.first == ResourceUsage::RTV)
+			{
+				PSO.NumRenderTargets++;
+				PSO.RTVFormats[i++] = Get_DXGI_Format(Res.second.Foramt);
+			}
+			if (Res.first == ResourceUsage::DSV)
+			{
+				PSO.DSVFormat = Get_DXGI_Format(Res.second.Foramt);
+			}
+		}
 		//PSO.SampleDesc.Count = m4xMsaaState ? 4 : 1;
 		//PSO.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-		PSO.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		//PSO.DSVFormat = Get_DXGI_Format(PassInfo->ResourceInfos[ResourceUsage::DSV].Foramt);
 	
-		//			Shader
+		//			Shader :  比较从前往后传的Shader参数 与 缓存Shader的参数.
+		//			是重新编译		还是用缓存的
+		// 
+		//			还是从RenderPSO里吧Shader除掉吧 , 从前往后传vector不好整啊
 		PSO.VS =
 		{
-			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shader.ShaderName]->GetBufferPointer()),
-			mShaders[RenderPSO.Shader.ShaderName]->GetBufferSize()
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shaders[0].ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shaders[0].ShaderName]->GetBufferSize()
 		};
 		PSO.PS =
 		{
-			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shader.ShaderName]->GetBufferPointer()),
-			mShaders[RenderPSO.Shader.ShaderName]->GetBufferSize()
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shaders[1].ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shaders[1].ShaderName]->GetBufferSize()
 		};
 
 		mPSOs.emplace("DepthPass",  new ComPtr<ID3D12PipelineState>);
@@ -469,6 +488,75 @@ namespace Engine::Render::resource
 		
 		//FrameGraphicsPassResource Resource;
 	}
+
+	void RenderResourceManager::AddGBufferPass(renderpass::GBufferPassInfo* PassInfo)
+	{
+		auto RenderPSO = PassInfo->RenderPSO;
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC  PSO;
+		ZeroMemory(&PSO, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		//			InputView
+		auto InputViews = RenderPSO.InputViews;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> InputDESC;
+		for (int i = 0; i < InputViews.size(); i++)
+		{
+			InputDESC.push_back(CreateInputDESC(InputViews[i]));
+		}
+		PSO.InputLayout = { InputDESC.data(),(uint32_t)InputDESC.size() };
+		//			RootSignature
+		PSO.pRootSignature = NULL;
+		//			Raster;
+		PSO.RasterizerState = CreateDefaultRasterDESC(RenderPSO.Rasterize);
+		//			BlendState
+		PSO.BlendState = CreateDefaultOpacityBlendState();
+		//			DepthStencilState
+		PSO.DepthStencilState = CreateDefaultD_S_State();
+		//			SampleMask
+		PSO.SampleMask = UINT_MAX;
+		//			PrimitiveTopolopgType
+		PSO.PrimitiveTopologyType = GetDX12Topology(RenderPSO.Topolopy);
+		//			RenderTargets
+		int i = 0;
+		for (const auto &Res : PassInfo->Resources)
+		{
+			if (Res.first == ResourceUsage::RTV)
+			{
+				PSO.NumRenderTargets++;
+				PSO.RTVFormats[i++] = Get_DXGI_Format(Res.second.Foramt);
+			}
+			if (Res.first == ResourceUsage::DSV)
+			{
+				PSO.DSVFormat = Get_DXGI_Format(Res.second.Foramt);
+			}
+		}
+		//			RenderTarget Format
+		//PSO.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		//PSO.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		//PSO.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		//PSO.RTVFormats[3] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		//
+		//PSO.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+		//PSO.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		//PSO.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		//			Shader :  比较从前往后传的Shader参数 与 缓存Shader的参数.
+		//			是重新编译		还是用缓存的
+		PSO.VS =
+		{
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shaders[0].ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shaders[0].ShaderName]->GetBufferSize()
+		};
+		PSO.PS =
+		{
+			reinterpret_cast<BYTE*>(mShaders[RenderPSO.Shaders[1].ShaderName]->GetBufferPointer()),
+			mShaders[RenderPSO.Shaders[1].ShaderName]->GetBufferSize()
+		};
+
+		mPSOs.emplace("DepthPass", new ComPtr<ID3D12PipelineState>);
+		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&PSO, IID_PPV_ARGS(&mPSOs["DepthPass"])));
+
+	}
+
 	void RenderResourceManager::Run()
 	{
 
@@ -479,7 +567,7 @@ namespace Engine::Render::resource
 		for (auto PassInfo : PassInfos)
 		{
 			//PassInfo->ExcuteLamda(CmdList, FrameGraphicsPassResources[PassInfo->Getname()]);
-			PassInfo->ExcuteLamda(CmdList, GetFrameGraphicsResource(PassInfo->Getname()));
+			PassInfo->ExcuteLamda(m_commandList.Get(), GetFrameGraphicsResource(PassInfo->GetPassName()));
 		}
 	}
 //	void RenderResourceManager::CreatePassResource(Engine::Render::renderpass::RenderPassInfo PPI)

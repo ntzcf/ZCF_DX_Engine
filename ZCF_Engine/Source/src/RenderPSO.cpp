@@ -12,7 +12,7 @@ namespace Engine::Render::resource
 		
 		InputDesc.InputSlot = InputView.InputSlot;
 
-		InputDesc.Format = InputView.Format;
+		InputDesc.Format = Get_DXGI_Format(InputView.Format);
 		
 		InputDesc.AlignedByteOffset = InputView.AlignedByteOffset;
 
@@ -70,8 +70,24 @@ namespace Engine::Render::resource
 		D_S_State.BackFace = defaultStencilOp;
 	}
 
-
-
-
-
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE GetDX12Topology(Topology Topo)
+	{
+		if (Topo == Topology::Triangle)
+		{
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		}
+		if (Topo == Topology::Point)
+		{
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		}
+		if (Topo == Topology::Line)
+		{
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		}
+		if (Topo == Topology::Patch)
+		{
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		}
+		
+	}
 }

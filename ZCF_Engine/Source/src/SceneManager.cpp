@@ -1,7 +1,7 @@
 #include "Scene/SceneManager.h"
 
 
-using namespace Engine::scene::Object;
+using namespace Engine::scene::Primitive;
 
 namespace Engine::scene
 {

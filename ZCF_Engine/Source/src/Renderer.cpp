@@ -1,16 +1,13 @@
 #include "Render/Renderer.h"
-#include "Render/SrcRenderHelper.h"
-#include "Render/RenderPass.h"
-#include "Render/RenderResourceManager.h"
-#include "Render/Buffer.h"
+#include "Render/RenderPassInfo.h"
+#include "Render/RenderManager.h"
+#include "Render/ResAttribute.h"
 #include "Render/RenderFrameGraph.h"
 
-using namespace resource::Buffer;
-using namespace frameGraph;
-using namespace renderpass;
-using namespace Engine::scene;
+using namespace  Engine::Render::renderpass;
+using namespace  Engine::Render::resource;
 
-namespace Engine::Render::renderer
+namespace Engine::Render
 {
 	void Renderer::Init(  scene::SceneManager	*SM)
 	{
@@ -51,30 +48,34 @@ namespace Engine::Render::renderer
 	{
 		DepthPassInfo PassInfo;
 		
+		PassInfo.ResourceInfos.emplace(ResourceUsage::DSV, ("DepthBuffer", ResourceFormat::Format_D24_UNORM_S8_UINT));
+		
 		PassInfo.isGraphics = 1;
 		
 		PassInfo.PassName = "DepthPass";
+		//Vertex
+		//Index
 
-		PassInfo.Vertex_Attribute_Stream.emplace
-		(SceneManager->GetVAS()->at(scene::Object::Vertex_Attribute::Position));
-		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());
+		//PassInfo.Vertex_Attribute_Stream.emplace
+		//(SceneManager->GetVAS()->at(scene::Object::Vertex_Attribute::Position));
+		//PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());
 
 		//PassInfo.RenderPSO.Shader		这也封装成一个材质吗?
-		PassInfo.RenderPSO.InputViews.emplace_back("position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 0, 0);
+		PassInfo.RenderPSO.InputViews.emplace_back("position", 0, ResourceFormat::RGBA_32_FLOAT, 0, 12, 0, 0);
 		//PassInfo.RenderPSO.BlendState.push_back(BlendState::DefaultBlend);
 		//PassInfo.RenderPSO.MutiSample;
 		//PassInfo.RenderPSO.Rasterize.CullMode = CullMode::Back;
 		//PassInfo.RenderPSO.Rasterize.FillMode = FillMode::Solid;
 		//PassInfo.RenderPSO.Rasterize.FrontCounterClockwise = 0;
-		//PassInfo.RenderPSO.RenderTargetNum = 1;
+		PassInfo.RenderPSO.RenderTargetNum = 0;
 		//PassInfo.RenderPSO.Topolopy = Topology::Triangle;
-		PassInfo.RenderPSO.Shader.emplace_back(ShaderType::VS, "DepthPass", "VS",
+		PassInfo.RenderPSO.Shaders.emplace_back(ShaderType::VS, "DepthPass", "VS",
 			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
 			"vs_5_0", "0", "0");
-		PassInfo.RenderPSO.Shader.emplace_back(ShaderType::PS, "DepthPass", "PS",
+		PassInfo.RenderPSO.Shaders.emplace_back(ShaderType::PS, "DepthPass", "PS",
 			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
 			"Ps_5_0", "0", "0");
-		PassInfo.Lamda=[](ID3D12GraphicsCommandList *cmdlist , const resource:: FrameGraphicsPassResource &Resource)
+		PassInfo.Lamda=[](ID3D12GraphicsCommandList *cmdlist , const FrameGraphicsPassResource &Resource)
 		{
 			cmdlist->SetPipelineState(Resource.PSO.Get());
 				   
@@ -100,17 +101,61 @@ namespace Engine::Render::renderer
 	{
 		GBufferPassInfo PassInfo;
 
+		PassInfo.Resources.emplace(ResourceUsage::RTV, ("GBuffer0", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.Resources.emplace(ResourceUsage::RTV, ("GBuffer1", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.Resources.emplace(ResourceUsage::RTV, ("GBuffer2", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.Resources.emplace(ResourceUsage::RTV, ("GBuffer3", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.Resources.emplace(ResourceUsage::DSV, ("DepthBuffer", ResourceFormat::Format_D24_UNORM_S8_UINT));
+
 		PassInfo.isGraphics = 1;
 
 		PassInfo.PassName = "DepthPass";
+		//Vertex
+		//Index
 
-		int num = SceneManager->GetVAS()->size();
+		PassInfo.RenderPSO.InputViews.emplace_back("position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, 0, 0);
+		PassInfo.RenderPSO.InputViews.emplace_back("normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 12, 0, 0);
+		PassInfo.RenderPSO.InputViews.emplace_back("tangent", 0, DXGI_FORMAT_R32G32B32_FLOAT, 2, 12, 0, 0);
+		PassInfo.RenderPSO.InputViews.emplace_back("basecolor", 0, DXGI_FORMAT_R32G32B32_FLOAT, 3, 12, 0, 0);
+		//PassInfo.RenderPSO.BlendState.push_back(BlendState::DefaultBlend);
+		//PassInfo.RenderPSO.MutiSample;
+		//PassInfo.RenderPSO.Rasterize.CullMode = CullMode::Back;
+		//PassInfo.RenderPSO.Rasterize.FillMode = FillMode::Solid;
+		//PassInfo.RenderPSO.Rasterize.FrontCounterClockwise = 0;
+		PassInfo.RenderPSO.RenderTargetNum = 4;
+		//PassInfo.RenderPSO.Topolopy = Topology::Triangle;
+		PassInfo.RenderPSO.Shaders.emplace_back(ShaderType::VS, "GBufferPass", "VS",
+			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
+			"vs_5_0", "0", "0");
+		PassInfo.RenderPSO.Shaders.emplace_back(ShaderType::PS, "GBufferPass", "PS",
+			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
+			"Ps_5_0", "0", "0");
+
+		PassInfo.Lamda = [](ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& Resource)
+		{
+			cmdlist->SetPipelineState(Resource.PSO.Get());
+
+			cmdlist->IASetVertexBuffers(0, Resource.VBV.size(), Resource.VBV.data());
+			cmdlist->IASetIndexBuffer(Resource.IBV);
+
+			//cmdli->t.Get()->SetDescriptorHeaps(0,Resource.Heaps.data());
+			//cmdli->t->SetGraphicsRoot32BitConstants(0u, 3u, reinterpret_cast<void*>(Resource.Constants.data()), 0u);
+
+			cmdlist->OMSetRenderTargets(Resource.RTVs.size(), Resource.RTVs.data(), 4, Resource.DSV);
+			//		>-	参数不够的部分就手动填了 , 总不能真全自动吧
+			cmdlist->RSSetViewports();
+			cmdlist->RSSetScissorRects();
+
+			cmdlist->DrawIndexedInstanced();
+		};
+
+		/*int num = SceneManager->GetVAS()->size();
 		for (int i = 0; i < num; i++)
 		{
 			PassInfo.Vertex_Attribute_Stream.emplace
 			(SceneManager->GetVAS()->at(Object::Vertex_Attribute::Position));
 		}
-		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());
+		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());*/
 
 
 

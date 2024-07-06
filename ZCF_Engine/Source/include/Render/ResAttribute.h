@@ -27,7 +27,7 @@ namespace Engine::Render::resource
 
 	enum class ResourceType
 	{
-		Null,
+		null,
 		Vertex,
 		Index,
 
@@ -47,9 +47,13 @@ namespace Engine::Render::resource
 
 	enum class ResourceFormat
 	{
-		R8_G8_B8_A8
+		null,
+		RGBA_32_FLOAT,
+		R8_G8_B8_A8,
+		Format_D24_UNORM_S8_UINT,
 
 	};
+	DXGI_FORMAT			Get_DXGI_Format(ResourceFormat format);
 
 	enum class VertexAttribute
 	{
@@ -68,13 +72,13 @@ namespace Engine::Render::resource
 	{
 		std::string								name;
 
-		resource::ResourceFormat		Foramt;
-		resource::ResourceType			Type;
+		resource::ResourceFormat		Foramt=ResourceFormat::null;
+		resource::ResourceType			Type=ResourceType::null;
 
-		uint32_t								Width;
-		uint32_t								Height;
+		uint32_t								Width=0;
+		uint32_t								Height=0;
 
-		bool									Frames;
+		bool									Global = 1;
 		//		如何针对不同种类: Texture , RootConstant , ConstantBuffer , Sampler?
 		//		让Renderer去统计然后全部上传.
 		//		最终靠名字去索引就完了.
@@ -98,10 +102,16 @@ namespace Engine::Render::resource
 		~VertexBuffer() {};
 
 		virtual ResourceType GetResourceType() { return ResourceType; };
+		
+		VertexAttribute	  GetVertexAttribute() { return VertexAttribute; };
 
 		ResourceType			ResourceType{ ResourceType::Vertex };
 		
-		struct VertexData
+		VertexAttribute			VertexAttribute;
+		uint32_t				Offset;
+		uint32_t				OneBits;
+		uint32_t				num;
+		/*struct VertexData
 		{
 			uint32_t                PostionStart;
 			uint32_t				NormalStart;
@@ -115,184 +125,56 @@ namespace Engine::Render::resource
 
 			uint32_t				num;
 
-		};
+		};*/
 
-		static VertexData	GetData() { return VertexData{0}; }
+		//static VertexData	GetData() { return VertexData{0}; }
 
-		VertexAttribute			VertexAttribute;
-		VertexData				VertexStart;
-	};
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	 class BaseBuffer
-	{
-	public:
-
-		BaseBuffer() {};
-		~BaseBuffer() {};
-
-		virtual  ResourceType	GetType() = 0;
-
+		//VertexData				VertexStart;
 	};
 
-	class UplaodBuffer :public BaseBuffer
-	{
-
-	};
-
-	union Data
-	{
-
-		std::vector<float>		VertexData;
-		std::vector<uint32_t>	IndexData;
-	};
-	
-	class VertexBuffer :public BaseBuffer
-	{
-	public:
-		VertexBuffer() {};
-		~VertexBuffer() {};
-
-		VertexAttribute		GetAttribute() 				{	return	Attribute;	};
-		ResourceType		GetType()		override	{	return	Type;};
-
-		std::string				Name;
-
-		VertexAttribute			Attribute;
-		
-		ResourceType			Type;
-		ResourceFormat			Format;
-
-
-		uint32_t				Size;
-		uint32_t				OneBits;
-		uint32_t				Nums;
-
-		std::vector<float>		VertexData;
-	};
-
-	class IndexBuffer :public BaseBuffer
+	class IndexBuffer : public RenderResourceType
 	{
 	public:
 		IndexBuffer() {};
 		~IndexBuffer() {};
 
-		
-		ResourceType		GetType()		override { return	Type; };
+		virtual ResourceType GetResourceType() { return ResourceType; };
 
-		std::string				Name;
+		ResourceType			ResourceType{ ResourceType::Index };
 
-		ResourceType			Type;
-		ResourceFormat			Format;
-
-
-		uint32_t				Size;
+		uint32_t				Offset;
 		uint32_t				OneBits;
-		uint32_t				Nums;
-
-		std::vector<uint32_t>		VertexData;
+		uint32_t				num;
 	};
 
-
-	//class IndexBuffer :public BaseBuffer
-	//{
-	//public:
-	//	IndexBuffer():Type(Index)
-	//	{};
-	//	~IndexBuffer() {};
-
-	//	std::string				Name;
-	//	const ResourceType		Type;
-	//	ResourceFormat			Format;
-
-	//	VertexAttribute				Attribute;
-
-	//	uint32_t				Size;
-	//	uint32_t				OneBits;
-	//	uint32_t				Nums;
-
-	//	Microsoft::WRL::ComPtr<ID3D12Resource>			Resource;
-
-	//};
-
-	//		RTV
-	class RenderTargetBuffer :public BaseBuffer
+	class ConstantBuffer : public RenderResourceType
 	{
 	public:
-		RenderTargetBuffer() {};
-		~RenderTargetBuffer() {};
+		ConstantBuffer() {};
+		~ConstantBuffer() {};
 
-		ResourceType		GetType()		override { return	Type; };
+		virtual ResourceType GetResourceType() { return ResourceType; };
 
-		std::string				Name;
-		ResourceType			Type;
-		ResourceFormat			Format;
-
-
-		uint32_t				Size;
-		uint32_t				OneBits;
-		uint32_t				Nums;
-
-		Microsoft::WRL::ComPtr<ID3D12Resource>				Resources;
-
+		ResourceType			ResourceType{ ResourceType::Constant_Buffer };
 	};
 
-
-	//		SOV
-
-
-	//		CBV
-	class ConstantBuffer :public BaseBuffer
+	class StructureBuffer : public RenderResourceType
 	{
+	public:
+		StructureBuffer() {};
+		~StructureBuffer() {};
 
+		virtual ResourceType GetResourceType() { return ResourceType; };
+
+		ResourceType			ResourceType{ ResourceType::Structure_Buffer };
 	};
-	//		Constant--------------Bindless Resource
 
-	//		Instance
-	class InstanceBuffer :public BaseBuffer
-	{
-
-	};
-	//		SRV
-	class Texture : public BaseBuffer
-	{
-
-	};
- 
-	//		UAV
-	class UAV_Buffer :public BaseBuffer
-	{
-
-	};
+	
 }
+
+
+
+
+
+
+

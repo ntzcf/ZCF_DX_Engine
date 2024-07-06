@@ -60,7 +60,7 @@ namespace Engine::Render::renderpass
 
 		virtual PassInfoType GetPassInfoType() = 0;
 		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R) = 0;
-
+		virtual std::string GetPassName();
 
 		//							In/Out Buffer,Texture
 		//							Resource In CPU
@@ -106,6 +106,8 @@ namespace Engine::Render::renderpass
 		//								或者直接变成Instance Stream?
 		std::unordered_map<resource::ResourceUsage, resource::VertexBuffer>				Vertex_Attribute_Stream;
 		std::unordered_map<resource::ResourceUsage, resource::IndexBuffer>				Index_Stream;
+
+		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>				ResourceInfos;
 		
 	};
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,15 +127,17 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
+		resource::RenderPSO				RenderPSO;
+
 		std::function<void(ID3D12GraphicsCommandList*, const FrameGraphicsPassResource&)>				Lamda;
 
 		bool					isGraphics;
 
 		//				Position		Normal		Tangent?		UV0			UV1		..............
-		std::unordered_map<resource::ResourceUsage, resource::VertexBuffer>		Vertex_Attribute_Stream;
-		std::unordered_map<resource::ResourceUsage, resource::Buffer::IndexBuffer>				Index_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::VertexBuffer>				Vertex_Attribute_Stream;
+		std::unordered_map<resource::ResourceUsage, resource::IndexBuffer>				Index_Stream;
 		//				GBuffer1		GBuffer2		GBuffer3		GBuffer4		GBuffer5
-		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>				Resources;
 
 	};
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +155,7 @@ namespace Engine::Render::renderpass
 		bool					isGraphics;
 			//		Compute
 		//			IN				OUT:UAV
-		std::unordered_map<resource::ResourceInfoUsage, resource::ResourceInfo>								ResourceInofs;
+		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>								ResourceInofs;
 
 	};
 

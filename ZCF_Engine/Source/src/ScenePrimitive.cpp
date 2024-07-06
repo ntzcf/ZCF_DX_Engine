@@ -1,6 +1,6 @@
 #include "Scene/ScenePrimitive.h"
 
-namespace Engine::scene::Object
+namespace Engine::scene::Primitive
 {
 
 

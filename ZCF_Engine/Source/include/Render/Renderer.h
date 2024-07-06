@@ -6,7 +6,7 @@
 #include "RenderPSO.h"
 class RenderResourceManager;
 
-namespace Engine::Render::renderer
+namespace Engine::Render
 {
 class Renderer
 {

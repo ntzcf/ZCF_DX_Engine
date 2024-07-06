@@ -5,7 +5,7 @@
 
 #include "SceneLoader.h"
 
-namespace Engine::scene::Object
+namespace Engine::scene::Primitive
 {
 	enum class Vertex_Attribute
 	{

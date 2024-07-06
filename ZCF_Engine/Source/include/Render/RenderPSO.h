@@ -3,6 +3,7 @@
 #include "d3dUtil.h"
 
 #include "Materials.h"
+#include "ResAttribute.h"
 
 namespace Engine::Render::resource
 {
@@ -60,7 +61,7 @@ namespace Engine::Render::resource
 	{
 		InputElementView(const char* SemanticName,
 		uint32_t						SemanticIndex,
-		DXGI_FORMAT						Format,
+		ResourceFormat					Format,
 		uint32_t						InputSlot,
 		uint32_t						AlignedByteOffset,
 		bool							IsInstance,
@@ -77,7 +78,7 @@ namespace Engine::Render::resource
 		//	使用的时候再 c_str()转成LPCSTR							
 		const char* 					SemanticName;
 		uint32_t						SemanticIndex;
-		DXGI_FORMAT						Format;
+		ResourceFormat					Format;
 		uint32_t						InputSlot;
 		uint32_t						AlignedByteOffset;
 		bool							IsInstance;
@@ -116,7 +117,7 @@ namespace Engine::Render::resource
 	public:
 		
 		uint32_t								RenderTargetNum=1;
-		std::vector<Shader>						Shader;
+		std::vector<Shader>						Shaders;
 		Rasterize								Rasterize;
 		std::vector<InputElementView>			InputViews;
 		MutiSample								MutiSample;
@@ -132,4 +133,8 @@ namespace Engine::Render::resource
 	D3D12_BLEND_DESC      CreateDefaultOpacityBlendState();
 
 	D3D12_DEPTH_STENCIL_DESC  CreateDefaultD_S_State();
+
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE GetDX12Topology(Topology Topo);
+
+	
 }

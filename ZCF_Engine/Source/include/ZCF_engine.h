@@ -3,6 +3,7 @@
 #include "Headers.hpp"
 #include "Common/DX_Camera.h"
 
+using namespace Engine;
 
 class ZCF_Engine
 {
@@ -34,13 +35,13 @@ private:
 	static	ZCF_Engine*											engine;
 	HWND														hwnd;
 	//GameLogic
-	Engine::Common::DX_Camera									mCamera;
-	Engine::GameLogic::timer ::GameTimer						mTimer;
+	Common::DX_Camera									mCamera;
+	GameLogic::timer ::GameTimer						mTimer;
 	//Scene
-	Engine::scene::SceneManager									SceneManager;
+	scene::SceneManager									SceneManager;
 	//Render
-	Engine::Render::resource::RenderResourceManager				RenderResourceManager;
-	Engine::Render::renderer::Renderer							Renderer;
+	Render::RenderResourceManager						RenderResourceManager;
+	Render::Renderer									Renderer;
 	//std::shared_ptr<Render::frameGraph::RenderFrameGraph>			RFG;
 
 

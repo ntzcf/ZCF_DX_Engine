@@ -76,6 +76,7 @@ namespace Engine::Render
 
 		void AddPass(renderpass::Pass_Mat_Info* PassInfo);
 		void AddDepthPass(renderpass::DepthPassInfo* PassInfo);
+		void AddGBufferPass(renderpass::GBufferPassInfo* PassInfo);
 		void Run();
 
 	private:
