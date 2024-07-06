@@ -39,6 +39,7 @@ private:
 	//…Ó∂»Õº
 	void DepthPass();
 	//Visible-G-Buffer
+	void GBufferPass();
 	void VisibleGPass();
 	//ShdowMap
 	void ShdowPass();
@@ -63,6 +64,7 @@ private:
 	
 	std::vector<renderpass::DepthPassInfo>					DepthPasses;
 	std::vector<renderpass::GBufferPassInfo>				GBufferPasses;
+	//std::vector<renderpass::ShadowPassInfo>					ShdowPasses;
 	std::vector<renderpass::LightingPassInfo>				LightingPasses;
 	std::vector<renderpass::MaterialPassInfo>				MaterialPasses;
 

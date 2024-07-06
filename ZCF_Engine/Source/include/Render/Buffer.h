@@ -4,7 +4,9 @@
 
 namespace Engine::Render::resource::Buffer
 {
-	enum ResourceInfoUsage
+
+
+	enum class ResourceUsage
 	{
 
 		VBV,
@@ -30,15 +32,16 @@ namespace Engine::Render::resource::Buffer
 		Index,
 
 		Instance,
-		
+
 		Root_Constant,
+
 		Constant_Buffer,
-		Struct_Buffer,
+		Structure_Buffer,
 
 		Texture_2D,
 		Texture_3D,
 		Texture_Array,
-		
+
 		Sampler,
 	};
 
@@ -76,6 +79,50 @@ namespace Engine::Render::resource::Buffer
 		//		让Renderer去统计然后全部上传.
 		//		最终靠名字去索引就完了.
 	};
+
+	class RenderResourceType
+	{
+	public:
+
+		RenderResourceType() {};
+		virtual ~RenderResourceType() {};
+
+		virtual ResourceType GetResourceType() = 0;
+
+	};
+
+	class VertexBuffer : public RenderResourceType
+	{
+	public:
+		VertexBuffer() {};
+		~VertexBuffer() {};
+
+		virtual ResourceType GetResourceType() { return ResourceType; };
+
+		ResourceType			ResourceType{ ResourceType::Vertex };
+		
+		struct VertexData
+		{
+			uint32_t                PostionStart;
+			uint32_t				NormalStart;
+			uint32_t				TangentStart;
+			uint32_t				BaseColorStart;
+
+			uint32_t				UV0Start;
+			uint32_t				UV1Start;
+			uint32_t				UV2Start;
+			uint32_t				UV3Start;
+
+			uint32_t				num;
+
+		};
+
+		static VertexData	GetData() { return VertexData{0}; }
+
+		VertexAttribute			VertexAttribute;
+		VertexData				VertexStart;
+	};
+}
 
 
 

@@ -37,6 +37,7 @@ namespace Engine::Render::renderpass
 	enum PassInfoType
 	{
 		Depth,
+		GBuffer,
 
 	};
 	//class resource::FrameGraphicsPassResource;
@@ -47,17 +48,17 @@ namespace Engine::Render::renderpass
 		~Pass_Mat_Info() {};
 
 		//	Collect主要负责收集DESC的部分,填写?
-		virtual void PassCollectBegin();//设置各种信号,log等,便于调试
-		virtual void PassCollect();//特化版:这里写假设啥的      普通版:无视这个,基本全要自己写,没什么假设
-		virtual void PassCollectEnd();//同Begin
+		//virtual void PassCollectBegin();//设置各种信号,log等,便于调试
+		//virtual void PassCollect();//特化版:这里写假设啥的      普通版:无视这个,基本全要自己写,没什么假设
+		//virtual void PassCollectEnd();//同Begin
 
-		virtual void PassExcuteBegin();
-		virtual void PassExcute();
-		virtual void PassExcuteEnd();
+		//virtual void PassExcuteBegin();
+		//virtual void PassExcute();
+		//virtual void PassExcuteEnd();
 
 		virtual PassInfoType GetPassInfoType() = 0;
 		virtual void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R) = 0;
-		virtual std::string Getname();
+		//virtual std::string Getname();
 
 	public:
 		//std::string				Pname;//	Pass
@@ -141,18 +142,23 @@ namespace Engine::Render::renderpass
 		GBufferPassInfo() {};
 		~GBufferPassInfo() {};
 
+		PassInfoType GetPassInfoType() { return PassInfoType::GBuffer; };
+
+		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const resource::FrameGraphicsPassResource& R)
+		{
+			Lamda(cmdlist, R);
+		};
+
 		std::string				PassName;
 		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,
-			resource::RenderResourceManager,
-			Microsoft::WRL::ComPtr<ID3D12Device>)>				Lamda;
+		std::function<void(ID3D12GraphicsCommandList*, const resource::FrameGraphicsPassResource&)>				Lamda;
 
 		bool					isGraphics;
 
 		//				Position		Normal		Tangent?		UV0			UV1		..............
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>				Vertex_Attribute_Steam;
-		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				IndexBuffer;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::VertexBuffer>		Vertex_Attribute_Stream;
+		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::IndexBuffer>				Index_Stream;
 		//				GBuffer1		GBuffer2		GBuffer3		GBuffer4		GBuffer5
 		std::unordered_map<resource::Buffer::ResourceInfoUsage, resource::Buffer::ResourceInfo>								ResourceInofs;
 

@@ -116,11 +116,11 @@ namespace Engine::Render::renderpass
 	public:
 		
 		uint32_t								RenderTargetNum=1;
-		Shader									Shader;
+		std::vector<Shader>						Shader;
 		Rasterize								Rasterize;
 		std::vector<InputElementView>			InputViews;
 		MutiSample								MutiSample;
-		std::vector<BlendState>					BlendState;
+		std::vector<BlendState>					BlendState{DefaultBlend};
 		Topology								Topolopy=Topology::Triangle;
 
 	};

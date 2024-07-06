@@ -8,6 +8,7 @@
 using namespace resource::Buffer;
 using namespace frameGraph;
 using namespace renderpass;
+using namespace Engine::scene;
 
 namespace Engine::Render::renderer
 {
@@ -48,17 +49,32 @@ namespace Engine::Render::renderer
 	}
 	void Renderer::DepthPass()
 	{
-		DepthPassInfo DPI;
+		DepthPassInfo PassInfo;
+		
+		PassInfo.isGraphics = 1;
+		
+		PassInfo.PassName = "DepthPass";
 
-		DPI.Vertex_Attribute_Stream.emplace
+		PassInfo.Vertex_Attribute_Stream.emplace
 		(SceneManager->GetVAS()->at(scene::Object::Vertex_Attribute::Position));
-		DPI.Index_Stream.emplace(SceneManager->GetIS()->data());
+		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());
 
-		DPI.isGraphics = 1;
-		DPI.PassName = "DepthPass";
-		//DPI.RenderPSO.Shader		这也封装成一个材质吗?
-		DPI.RenderPSO.InputView.emplace_back("position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 0, 0);
-		DPI.Lamda=[](ID3D12GraphicsCommandList *cmdlist , const resource:: FrameGraphicsPassResource &Resource)
+		//PassInfo.RenderPSO.Shader		这也封装成一个材质吗?
+		PassInfo.RenderPSO.InputViews.emplace_back("position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 0, 0);
+		//PassInfo.RenderPSO.BlendState.push_back(BlendState::DefaultBlend);
+		//PassInfo.RenderPSO.MutiSample;
+		//PassInfo.RenderPSO.Rasterize.CullMode = CullMode::Back;
+		//PassInfo.RenderPSO.Rasterize.FillMode = FillMode::Solid;
+		//PassInfo.RenderPSO.Rasterize.FrontCounterClockwise = 0;
+		//PassInfo.RenderPSO.RenderTargetNum = 1;
+		//PassInfo.RenderPSO.Topolopy = Topology::Triangle;
+		PassInfo.RenderPSO.Shader.emplace_back(ShaderType::VS, "DepthPass", "VS",
+			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
+			"vs_5_0", "0", "0");
+		PassInfo.RenderPSO.Shader.emplace_back(ShaderType::PS, "DepthPass", "PS",
+			"E:/My projects/DX12_Engine/ZCF_Engine/ZCF_Engine/Source/shaders",
+			"Ps_5_0", "0", "0");
+		PassInfo.Lamda=[](ID3D12GraphicsCommandList *cmdlist , const resource:: FrameGraphicsPassResource &Resource)
 		{
 			cmdlist->SetPipelineState(Resource.PSO.Get());
 				   
@@ -79,6 +95,25 @@ namespace Engine::Render::renderer
 		//RFG->Add_Resource();
 
 		
+	}
+	void Renderer::GBufferPass()
+	{
+		GBufferPassInfo PassInfo;
+
+		PassInfo.isGraphics = 1;
+
+		PassInfo.PassName = "DepthPass";
+
+		int num = SceneManager->GetVAS()->size();
+		for (int i = 0; i < num; i++)
+		{
+			PassInfo.Vertex_Attribute_Stream.emplace
+			(SceneManager->GetVAS()->at(Object::Vertex_Attribute::Position));
+		}
+		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());
+
+
+
 	}
 	//	void Renderer::LearnPass()
 //	{
