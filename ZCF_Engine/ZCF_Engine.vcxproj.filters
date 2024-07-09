@@ -27,14 +27,35 @@
     <Filter Include="include\Common\Vertex">
       <UniqueIdentifier>{06b20cb5-9baf-4c94-9a7f-7cc6db0bf24a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Render\Helper">
-      <UniqueIdentifier>{fa078cd2-9a95-48f7-8771-c13a931c1614}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Render\Resource">
-      <UniqueIdentifier>{c9a52d81-d219-4c6f-9367-bb96a7365f95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{ffe94077-445d-4732-bcdc-7adc2080ac7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Graphics">
+      <UniqueIdentifier>{644201a7-2fed-4155-9dff-6660ef249458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Graphics\Resource">
+      <UniqueIdentifier>{5d6ad618-76a6-4c41-af8d-6957bf9b5270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Graphics\Command">
+      <UniqueIdentifier>{f70c2cac-f390-49e0-b0e8-d8ff7ed0f638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Graphics\Descriptor">
+      <UniqueIdentifier>{ea4dcd6a-8fff-4e1f-a1d0-a44da96e4288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Graphics\Pipeline">
+      <UniqueIdentifier>{faf19bee-67d6-4e6f-b9c4-bb63c9dd3f1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Common">
+      <UniqueIdentifier>{fa078cd2-9a95-48f7-8771-c13a931c1614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Render">
+      <UniqueIdentifier>{a71841ed-7d9c-420a-a4f8-c42b5f325d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Material">
+      <UniqueIdentifier>{b042fc9b-8f6d-45cc-ad28-60b9063bb673}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Render\Light">
+      <UniqueIdentifier>{70c14a72-fbd5-48fc-8f9d-232ce280dc98}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,20 +65,11 @@
     <ClInclude Include="Source\include\Scene\SceneManager.h">
       <Filter>include\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderFrameGraph.h">
-      <Filter>include\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\Renderer.h">
-      <Filter>include\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Headers.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\ZCF_engine.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\Render.hpp">
-      <Filter>include\Render</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Scene\Scene.hpp">
       <Filter>include\Scene</Filter>
@@ -69,19 +81,7 @@
       <Filter>include\Common</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\d3dx12.h">
-      <Filter>include\Render\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\ResAttribute.h">
-      <Filter>include\Render\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\Device_Windows.h">
-      <Filter>include\Render\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderManager.h">
-      <Filter>include\Render\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderPassInfo.h">
-      <Filter>include\Render</Filter>
+      <Filter>include\Render\Common</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Scene\ScenePrimitive.h">
       <Filter>include\Scene</Filter>
@@ -102,16 +102,13 @@
       <Filter>include\GameLogic</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\d3dUtil.h">
-      <Filter>include\Render\Helper</Filter>
+      <Filter>include\Render\Common</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\MathHelper.h">
-      <Filter>include\Render\Helper</Filter>
+      <Filter>include\Render\Common</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Render\UploadBuffer.h">
-      <Filter>include\Render\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\RenderPSO.h">
-      <Filter>include\Render\Resource</Filter>
+      <Filter>include\Render\Common</Filter>
     </ClInclude>
     <ClInclude Include="Source\include\Common\DX_Camera.h">
       <Filter>include\Common</Filter>
@@ -119,17 +116,8 @@
     <ClInclude Include="Source\include\GameLogic\CameraControl.h">
       <Filter>include\GameLogic</Filter>
     </ClInclude>
-    <ClInclude Include="Source\include\Render\Lights.h">
-      <Filter>include\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\Materials.h">
-      <Filter>include\Render\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\include\Render\Texture.h">
-      <Filter>include\Render\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="Source\include\Render\TextureLoader.h">
-      <Filter>include\Render\Helper</Filter>
+      <Filter>include\Render\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

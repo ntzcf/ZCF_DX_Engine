@@ -2,7 +2,7 @@
 
 #include "d3dUtil.h"
 #include "Scene/SceneManager.h"
-
+#include "Common/DX_Camera.h"
 #include "RenderManager.h"
 #include "ResAttribute.h"
 #include "RenderPSO.h"
@@ -40,7 +40,7 @@ namespace Engine::Render::renderpass
 	{
 		Depth,
 		GBuffer,
-
+		Lighting,
 	};
 	//class resource::FrameGraphicsPassResource;
 	class Pass_Mat_Info
@@ -154,9 +154,24 @@ namespace Engine::Render::renderpass
 		std::string				PassName;
 		std::string				MaterialName;
 
-		std::function<void(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>,FrameComputePassResource)>				Lamda;
+		PassInfoType GetPassInfoType() { return PassInfoType::Lighting; };
+
+		std::string GetPassName() { return "LightingPass"; }
+
+		void ExcuteLamda(ID3D12GraphicsCommandList* cmdlist, const FrameGraphicsPassResource& R)
+		{
+			Lamda(cmdlist, R);
+		};
+
+		std::function<void(ID3D12GraphicsCommandList*, const FrameGraphicsPassResource&)>				Lamda;
 
 		bool					isGraphics;
+
+	
+		std::string				PassName;
+		std::string				MaterialName;
+
+		resource::RenderPSO				RenderPSO;
 			//		Compute
 		//			IN				OUT:UAV
 		std::unordered_map<resource::ResourceUsage, resource::ResourceInfo>								ResourceInofs;

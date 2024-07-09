@@ -493,6 +493,8 @@ namespace Engine::Render::resource
 	{
 		auto RenderPSO = PassInfo->RenderPSO;
 
+
+
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC  PSO;
 		ZeroMemory(&PSO, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 		//			InputView
@@ -589,4 +591,4 @@ namespace Engine::Render::resource
 //		CreateVertexBuffer();
 //		CreateIndexBuffer();
 //	}
-//};
+//}

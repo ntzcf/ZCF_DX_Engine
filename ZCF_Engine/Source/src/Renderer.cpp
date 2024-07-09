@@ -49,7 +49,6 @@ namespace Engine::Render
 		DepthPassInfo PassInfo;
 		
 		PassInfo.ResourceInfos.emplace(ResourceUsage::DSV, ("DepthBuffer", ResourceFormat::Format_D24_UNORM_S8_UINT));
-		
 		PassInfo.isGraphics = 1;
 		
 		PassInfo.PassName = "DepthPass";
@@ -156,6 +155,19 @@ namespace Engine::Render
 			(SceneManager->GetVAS()->at(Object::Vertex_Attribute::Position));
 		}
 		PassInfo.Index_Stream.emplace(SceneManager->GetIS()->data());*/
+
+
+
+	}
+	void Renderer::LightingPass()
+	{
+		LightingPassInfo	PassInfo;
+		PassInfo.ResourceInofs.emplace(ResourceUsage::SRV, ("GBuffer0", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.ResourceInofs.emplace(ResourceUsage::SRV, ("GBuffer1", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.ResourceInofs.emplace(ResourceUsage::SRV, ("GBuffer2", ResourceFormat::RGBA_32_FLOAT));
+		PassInfo.ResourceInofs.emplace(ResourceUsage::SRV, ("GBuffer3", ResourceFormat::RGBA_32_FLOAT));
+
+		PassInfo.ResourceInofs.emplace(ResourceUsage::UAV, ("GBuffer0", ResourceFormat::RGBA_32_FLOAT , ResourceType::Structure_Buffer));
 
 
 
